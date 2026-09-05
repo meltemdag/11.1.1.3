@@ -9,10 +9,13 @@ interface MapExplorerProps {
   onGoToChain?: () => void;
 }
 
-export const MapExplorer: React.FC<MapExplorerProps> = ({ progress, onSelectTreaty }) => {
+export const MapExplorer: React.FC<MapExplorerProps> = ({ progress, onSelectTreaty, onGoToChain }) => {
   const [selectedId, setSelectedId] = useState<TreatyId>('karlofca');
   const [hoveredId, setHoveredId] = useState<TreatyId | null>(null);
   const selectedTreaty = TREATIES.find(t => t.id === selectedId) || TREATIES[0];
+
+  const completedCount = TREATIES.filter(t => progress[t.id]?.completed).length;
+  const allCompleted = completedCount === TREATIES.length;
 
   const getTreatyQuestion = (id: TreatyId) => {
     switch (id) {
@@ -33,6 +36,22 @@ export const MapExplorer: React.FC<MapExplorerProps> = ({ progress, onSelectTrea
 
   return (
     <div>
+      {/* Açıklama ve Yönlendirme Metni */}
+      <div className="parchment-surface rounded-xl border-2 border-parchment-400/70 p-3.5 sm:p-4 mb-4 text-xs sm:text-sm text-ink-light shadow-parchment flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <p className="leading-relaxed">
+          1699-1774 yılları arasında Osmanlı Devleti'nin imzaladığı antlaşmaları harita üzerindeki merkezleri seçerek inceleyiniz; dönemin diplomatik ilişkilerini, imzacı taraflarını ve kritik kararlarını değerlendiriniz.
+        </p>
+        {allCompleted && onGoToChain && (
+          <button
+            onClick={onGoToChain}
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-olive-seal to-[#3d4c18] hover:from-[#3d4c18] hover:to-olive-seal text-parchment-100 rounded-xl text-xs sm:text-sm font-bold shadow-wax border border-brass/60 transition-all cursor-pointer shrink-0 animate-pulse"
+          >
+            <span>Sonraki Adıma Geç (Diplomasi Zinciri)</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        )}
+      </div>
+
       {/* Harita ve Detay Bölümü */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
         {/* İnteraktif Harita Alanı (Genişletilmiş) — eski kâşife ait çerçeveli harita */}
@@ -122,11 +141,6 @@ export const MapExplorer: React.FC<MapExplorerProps> = ({ progress, onSelectTrea
                 <h2 className="font-antique text-2xl sm:text-3xl font-bold text-ink tracking-tight leading-snug">
                   {selectedTreaty.title}
                 </h2>
-                {progress[selectedTreaty.id]?.completed && (
-                  <span className="inline-flex items-center gap-1 text-xs font-semibold text-olive-seal bg-[#eef0da] px-2.5 py-1 rounded-full border border-olive-seal/40 shadow-2xs shrink-0">
-                    <CheckCircle2 className="w-3.5 h-3.5" /> Tamamlandı
-                  </span>
-                )}
               </div>
 
               <div className="flex items-center gap-1.5 text-xs text-ink-soft mt-1">

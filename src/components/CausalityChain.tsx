@@ -4,7 +4,8 @@ import {
   CheckCircle2,
   XCircle,
   RotateCcw,
-  Link2
+  Link2,
+  ArrowRight
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -50,13 +51,15 @@ const CHAIN_LINKS: ChainLinkItem[] = [
   }
 ];
 
-export const CausalityChain: React.FC<CausalityChainProps> = () => {
+export const CausalityChain: React.FC<CausalityChainProps> = ({ onGoToSummary }) => {
   const [placedLinks, setPlacedLinks] = useState<{ [slotIndex: number]: string }>({});
   const [selectedLinkId, setSelectedLinkId] = useState<string | null>(null);
   const [lastFeedback, setLastFeedback] = useState<{
     type: 'correct' | 'wrong' | null;
     message: string;
   }>({ type: null, message: '' });
+
+  const isChainCompleted = Object.keys(placedLinks).length === CHAIN_LINKS.length;
 
   // Havuzda kalan yerleştirilmemiş bağlantı halkaları (karışık sırada)
   const unplacedLinks = useMemo(() => {
@@ -74,7 +77,7 @@ export const CausalityChain: React.FC<CausalityChainProps> = () => {
       setSelectedLinkId(null);
       setLastFeedback({
         type: 'correct',
-        message: 'Doğru eşleştirme!'
+        message: 'Doğru'
       });
 
       if (Object.keys(updated).length === CHAIN_LINKS.length) {
@@ -91,13 +94,6 @@ export const CausalityChain: React.FC<CausalityChainProps> = () => {
         message: linkItem.hint
       });
     }
-  };
-
-  const handleRemoveLink = (slotIndex: number) => {
-    const updated = { ...placedLinks };
-    delete updated[slotIndex];
-    setPlacedLinks(updated);
-    setLastFeedback({ type: null, message: '' });
   };
 
   const handleReset = () => {
@@ -135,7 +131,7 @@ export const CausalityChain: React.FC<CausalityChainProps> = () => {
         {/* Açıklama ve Sıfırlama Şeridi */}
         <div className="parchment-deep px-5 sm:px-6 py-3 border-b border-parchment-400/70 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs sm:text-sm text-ink-light">
           <div>
-            Aşağıdaki maddeleri inceleyiniz; antlaşmalar arasında Karadeniz'in statüsünün değişimini gösteren zincir halkalarını doğru sırayla yerleştiriniz.
+            Antlaşmalar arasındaki gelişmeleri inceleyiniz; Karadeniz'in statüsündeki değişimi ve neden-sonuç ilişkilerini dikkate alarak zincir halkalarını doğru sırayla yerleştiriniz.
           </div>
           <button
             onClick={handleReset}
@@ -203,16 +199,6 @@ export const CausalityChain: React.FC<CausalityChainProps> = () => {
                               <p className="text-[11px] sm:text-[11.5px] md:text-xs lg:text-[12.5px] xl:text-[13px] font-semibold text-ink leading-snug">
                                 {placedLinkItem.text}
                               </p>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleRemoveLink(slotIndex);
-                                }}
-                                className="text-[9.5px] sm:text-[10px] text-seal hover:text-seal-dark font-bold underline hover:no-underline cursor-pointer pt-0.5 shrink-0"
-                                title="Bağlantıyı kaldır"
-                              >
-                                Kaldır
-                              </button>
                             </div>
                           ) : (
                             <div className="flex flex-col items-center justify-center space-y-1 p-1 text-center">
@@ -292,6 +278,19 @@ export const CausalityChain: React.FC<CausalityChainProps> = () => {
                 {lastFeedback.message}
               </p>
             </div>
+          </div>
+        )}
+
+        {/* Zincir Tamamlandığında Açılan Sonraki Aşamaya Geçiş Alanı */}
+        {isChainCompleted && onGoToSummary && (
+          <div className="p-4 sm:p-5 border-t border-parchment-400/70 flex items-center justify-center animate-fade-in">
+            <button
+              onClick={onGoToSummary}
+              className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-parchment-100 bg-gradient-to-r from-olive-seal to-[#3d4c18] hover:from-[#3d4c18] hover:to-olive-seal border border-brass/60 shadow-wax hover:shadow-parchment transition-all cursor-pointer animate-pulse"
+            >
+              <span>Sonraki Aşamaya Geç (Karşılaştırmalı Analiz)</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
           </div>
         )}
 

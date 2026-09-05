@@ -5,7 +5,7 @@ import { Maximize2, Minimize2 } from 'lucide-react';
 interface HeaderProps {
   activeTab: ActiveTab;
   setActiveTab: (tab: ActiveTab) => void;
-  completedCount: number;
+  completedCount?: number;
 }
 
 const tabClass = (active: boolean) =>
@@ -17,8 +17,7 @@ const tabClass = (active: boolean) =>
 
 export const Header: React.FC<HeaderProps> = ({
   activeTab,
-  setActiveTab,
-  completedCount
+  setActiveTab
 }) => {
   const [isFullscreen, setIsFullscreen] = useState<boolean>(
     () => typeof document !== 'undefined' && !!document.fullscreenElement
@@ -55,26 +54,21 @@ export const Header: React.FC<HeaderProps> = ({
             onClick={() => setActiveTab('harita')}
             className={tabClass(activeTab === 'harita')}
           >
-            <span>Strateji Haritası</span>
+            <span>Diplomasi Haritası</span>
           </button>
 
           <button
             onClick={() => setActiveTab('etkinlik')}
-            className={`flex items-center ${tabClass(activeTab === 'etkinlik')}`}
+            className={tabClass(activeTab === 'etkinlik')}
           >
             <span>Neden - Sonuç</span>
-            {completedCount > 0 && (
-              <span className="ml-1.5 px-1.5 py-0.2 bg-brass/25 text-brass-pale border border-brass/50 rounded text-xs">
-                {completedCount}
-              </span>
-            )}
           </button>
 
           <button
             onClick={() => setActiveTab('nedensellik')}
             className={tabClass(activeTab === 'nedensellik')}
           >
-            <span>Antlaşma Kronolojisi</span>
+            <span>Diplomasi Zinciri</span>
           </button>
 
           <button

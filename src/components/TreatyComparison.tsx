@@ -86,7 +86,7 @@ const COMPARISON_DATA: ComparisonData[] = [
     treatyId: 'pasarofca',
     title: 'Pasarofça Antlaşması',
     year: 1718,
-    badge: 'Batı Üstünlüğü & Lale Devri',
+    badge: 'Batı Üstünlüğü ve Lale Devri',
     badgeColor: 'bg-[#e2e2ec] text-[#3b3f63] border-[#a9aecb]',
     foreignPolicy: {
       tag: 'Barış ve Islahat',
@@ -194,7 +194,7 @@ export const TreatyComparison: React.FC<TreatyComparisonProps> = () => {
           <div>
             <h4 className="font-antique font-bold text-sm sm:text-base">Etkinlik Başarıyla Tamamlandı</h4>
             <p className="text-xs sm:text-sm text-[#4a5423] mt-0.5">
-              XVII-XVIII. Yüzyıl Osmanlı Diplomasisi analizini, neden-sonuç sınıflandırmalarını ve antlaşma kronolojisini eksiksiz tamamladınız.
+              XVII-XVIII. Yüzyıl Osmanlı Diplomasisi analizini, neden-sonuç sınıflandırmalarını ve diplomasi zincirini eksiksiz tamamladınız.
             </p>
           </div>
         </div>
@@ -284,14 +284,14 @@ export const TreatyComparison: React.FC<TreatyComparisonProps> = () => {
                   </p>
                 </div>
 
-                {/* Diplomasi & Arabuluculuk Boyutu */}
+                {/* Diplomasi ve Arabuluculuk Boyutu */}
                 <div className={`rounded-xl p-2.5 ${theme.itemBg} border shadow-2xs`}>
                   <p className="text-[11.5px] text-ink-light leading-relaxed">
                     {item.diplomacy.summary}
                   </p>
                 </div>
 
-                {/* İlkler & Kırılmalar Boyutu */}
+                {/* İlkler ve Kırılmalar Boyutu */}
                 <div className={`rounded-xl p-2.5 ${theme.itemBg} border shadow-2xs`}>
                   <p className="text-[11.5px] text-ink-light leading-relaxed">
                     {item.breakthroughs.summary}

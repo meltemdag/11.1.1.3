@@ -5,7 +5,8 @@ import {
   CheckCircle2,
   XCircle,
   RotateCcw,
-  ArrowLeft
+  ArrowLeft,
+  ArrowRight
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -25,9 +26,13 @@ export const TreatyCardActivity: React.FC<TreatyCardActivityProps> = ({
   currentTreatyId,
   progress,
   onUpdateProgress,
+  onGoToNextTab,
   onGoToPrevTab
 }) => {
   const treaty = TREATIES.find(t => t.id === currentTreatyId) || TREATIES[0];
+
+  const completedCount = TREATIES.filter(t => progress[t.id]?.completed).length;
+  const allCompleted = completedCount === TREATIES.length;
 
   // Kullanıcının yerleştirdiği maddeler
   const [placedCauses, setPlacedCauses] = useState<string[]>([]);
@@ -81,7 +86,7 @@ export const TreatyCardActivity: React.FC<TreatyCardActivityProps> = ({
       setSelectedCardId(null);
       setLastFeedback({
         type: 'correct',
-        message: item.explanation
+        message: 'Doğru'
       });
 
       // Tüm maddeler doğru yerleştirildi mi kontrolü
@@ -98,28 +103,14 @@ export const TreatyCardActivity: React.FC<TreatyCardActivityProps> = ({
         onUpdateProgress(treaty.id, newCauses, newEffects, false);
       }
     } else {
-      // Hatalı yerleştirme
+      // Düşünelim / İpucu yönlendirmesi (Doğrudan cevap vermeden düşünmeye teşvik eden yapı)
       setLastFeedback({
         type: 'wrong',
         message: target === 'cause'
-          ? 'Bu madde bir neden değil, antlaşmanın doğurduğu bir sonuçtur. Lütfen ifadenin olaydan önce mi sonra mı gerçekleştiğini değerlendiriniz.'
-          : 'Bu madde bir sonuç değil, antlaşmaya ve savaşa yol açan bir nedendir. Lütfen ifadenin olaydan önce mi sonra mı gerçekleştiğini değerlendiriniz.'
+          ? 'İpucu: Bu gelişmenin antlaşmadan önce süreci hazırlayan bir etken mi, yoksa antlaşmanın ardından ortaya çıkan bir durum mu olduğunu değerlendiriniz.'
+          : 'İpucu: Bu gelişmenin antlaşmanın ardından ortaya çıkan bir durum mu, yoksa antlaşmaya zemin hazırlayan bir etken mi olduğunu değerlendiriniz.'
       });
     }
-  };
-
-  // Kartı havuzdan geri çekme (kaldırma)
-  const handleRemoveItem = (itemId: string, source: 'cause' | 'effect') => {
-    if (source === 'cause') {
-      const updated = placedCauses.filter(id => id !== itemId);
-      setPlacedCauses(updated);
-      onUpdateProgress(treaty.id, updated, placedEffects, false);
-    } else {
-      const updated = placedEffects.filter(id => id !== itemId);
-      setPlacedEffects(updated);
-      onUpdateProgress(treaty.id, placedCauses, updated, false);
-    }
-    setLastFeedback({ type: null, message: '' });
   };
 
   // Bu antlaşmayı baştan deneme
@@ -161,7 +152,6 @@ export const TreatyCardActivity: React.FC<TreatyCardActivityProps> = ({
     boardTitle: string,
     dotColor: string,
     placed: string[],
-    source: 'cause' | 'effect',
     dropTarget: 'cause' | 'effect',
     placeholder: string
   ) => (
@@ -193,22 +183,10 @@ export const TreatyCardActivity: React.FC<TreatyCardActivityProps> = ({
               return (
                 <div
                   key={id}
-                  className="bg-[#eef0da] border border-olive-seal/50 rounded-lg p-3 text-xs sm:text-sm text-ink shadow-2xs flex items-start justify-between gap-2 transition-all"
+                  className="bg-[#eef0da] border border-olive-seal/50 rounded-lg p-3 text-xs sm:text-sm text-ink shadow-2xs flex items-start gap-2.5 transition-all"
                 >
-                  <div className="flex items-start gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-olive-seal shrink-0 mt-0.5" />
-                    <span className="leading-relaxed">{item.text}</span>
-                  </div>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleRemoveItem(id, source);
-                    }}
-                    className="text-seal hover:text-seal-dark p-1 hover:bg-seal/10 rounded text-xs shrink-0"
-                    title="Maddeleri kaldır"
-                  >
-                    Kaldır
-                  </button>
+                  <CheckCircle2 className="w-4 h-4 text-olive-seal shrink-0 mt-0.5" />
+                  <span className="leading-relaxed">{item.text}</span>
                 </div>
               );
             })}
@@ -233,7 +211,7 @@ export const TreatyCardActivity: React.FC<TreatyCardActivityProps> = ({
         {/* Görev Açıklaması */}
         <div className="parchment-deep px-5 sm:px-6 py-3.5 border-b border-parchment-400/70 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs sm:text-sm text-ink-light">
           <div>
-            Aşağıda verilen maddeleri inceleyiniz; maddeleri sürükleyerek ya da karta dokunup ilgili panoyu seçerek yerleştiriniz.
+            Antlaşmaya ait gelişmeleri inceleyiniz; olayları antlaşmaya yol açan nedenler ve antlaşma sonrasında ortaya çıkan sonuçlar olarak ilgili panolara yerleştiriniz.
           </div>
           <button
             onClick={handleResetCurrent}
@@ -247,23 +225,25 @@ export const TreatyCardActivity: React.FC<TreatyCardActivityProps> = ({
         {/* Geri Bildirim Şeridi */}
         {lastFeedback.type && (
           <div
-            className={`px-5 py-3 border-b text-xs sm:text-sm flex items-start gap-2.5 transition-all ${
+            className={`px-5 py-3 border-b text-xs sm:text-sm flex gap-2.5 transition-all ${
               lastFeedback.type === 'correct'
-                ? 'bg-[#eef0da] text-[#2f3a10] border-olive-seal/40'
-                : 'bg-[#f5e2de] text-seal-dark border-seal/40'
+                ? 'bg-[#eef0da] text-[#2f3a10] border-olive-seal/40 items-center'
+                : 'bg-[#f5e2de] text-seal-dark border-seal/40 items-start'
             }`}
           >
             {lastFeedback.type === 'correct' ? (
-              <CheckCircle2 className="w-5 h-5 text-olive-seal shrink-0 mt-0.5" />
+              <CheckCircle2 className="w-5 h-5 text-olive-seal shrink-0" />
             ) : (
               <XCircle className="w-5 h-5 text-seal shrink-0 mt-0.5" />
             )}
-            <div>
-              <span className="font-bold block">
-                {lastFeedback.type === 'correct' ? 'Doğru Değerlendirme' : 'Hatalı Yerleştirme'}
-              </span>
-              <p className="mt-0.5 leading-relaxed">{lastFeedback.message}</p>
-            </div>
+            {lastFeedback.type === 'correct' ? (
+              <span className="font-bold text-sm">Doğru</span>
+            ) : (
+              <div>
+                <span className="font-bold block">Düşünelim</span>
+                <p className="mt-0.5 leading-relaxed">{lastFeedback.message}</p>
+              </div>
+            )}
           </div>
         )}
 
@@ -277,7 +257,6 @@ export const TreatyCardActivity: React.FC<TreatyCardActivityProps> = ({
               'bg-brass',
               placedCauses,
               'cause',
-              'cause',
               'Seçili maddeyi buraya "Neden" olarak yerleştirmek için tıklayınız'
             )}
 
@@ -286,7 +265,6 @@ export const TreatyCardActivity: React.FC<TreatyCardActivityProps> = ({
               boardTitles.effects,
               'bg-seal',
               placedEffects,
-              'effect',
               'effect',
               'Seçili maddeyi buraya "Sonuç" olarak yerleştirmek için tıklayınız'
             )}
@@ -321,9 +299,9 @@ export const TreatyCardActivity: React.FC<TreatyCardActivityProps> = ({
           )}
         </div>
 
-        {/* Alt Gezinme: Haritaya Dön Butonu (Ortalanmış) */}
-        {onGoToPrevTab && (
-          <div className="parchment-deep px-5 sm:px-6 py-4 border-t border-parchment-400/70 flex items-center justify-center">
+        {/* Alt Gezinme: Haritaya Dön ve Sonraki Adım Butonları */}
+        <div className="parchment-deep px-5 sm:px-6 py-4 border-t border-parchment-400/70 flex flex-col sm:flex-row items-center justify-center gap-3">
+          {onGoToPrevTab && (
             <button
               onClick={onGoToPrevTab}
               className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-parchment-100 bg-gradient-to-b from-ink-light to-ink border border-brass/50 hover:from-ink hover:to-ink transition-colors shadow-wax cursor-pointer"
@@ -331,8 +309,18 @@ export const TreatyCardActivity: React.FC<TreatyCardActivityProps> = ({
               <ArrowLeft className="w-4 h-4" />
               <span>Haritaya Dön</span>
             </button>
-          </div>
-        )}
+          )}
+
+          {allCompleted && onGoToNextTab && (
+            <button
+              onClick={onGoToNextTab}
+              className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-parchment-100 bg-gradient-to-r from-olive-seal to-[#3d4c18] hover:from-[#3d4c18] hover:to-olive-seal border border-brass/60 shadow-wax hover:shadow-parchment transition-all cursor-pointer animate-pulse"
+            >
+              <span>Tüm Pinler Tamamlandı • Diplomasi Zincirine İlerle</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
