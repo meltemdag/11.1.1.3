@@ -41,7 +41,7 @@ export const MapExplorer: React.FC<MapExplorerProps> = ({ progress, onSelectTrea
             {/* Arka plan harita görseli */}
             <img
               src="./harita.png"
-              alt="17-18. Yüzyıl Osmanlı Haritası"
+              alt="XVII-XVIII. Yüzyıl Osmanlı Haritası"
               className="w-full h-full object-cover object-center sepia-[0.35] contrast-[0.95] saturate-[0.85]"
             />
 

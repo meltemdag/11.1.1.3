@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ActiveTab } from '../types';
+import { Maximize2, Minimize2 } from 'lucide-react';
 
 interface HeaderProps {
   activeTab: ActiveTab;
@@ -19,6 +20,29 @@ export const Header: React.FC<HeaderProps> = ({
   setActiveTab,
   completedCount
 }) => {
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(
+    () => typeof document !== 'undefined' && !!document.fullscreenElement
+  );
+
+  // Tam ekran durumunu izle (F11 veya sistem yollarıyla çıkılması dahil)
+  useEffect(() => {
+    const handleChange = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener('fullscreenchange', handleChange);
+    return () => document.removeEventListener('fullscreenchange', handleChange);
+  }, []);
+
+  const handleToggleFullscreen = () => {
+    if (document.fullscreenElement) {
+      document.exitFullscreen().catch(() => {
+        // sessiz hata yönetimi
+      });
+    } else {
+      document.documentElement.requestFullscreen().catch(() => {
+        // sessiz hata yönetimi
+      });
+    }
+  };
+
   return (
     <header className="leather-surface sticky top-0 z-40 shadow-parchment-lg border-b-2 border-brass/70">
       {/* Altın çift çizgi süsü (deri cildin pirinç frenk çivisi bandı) */}
@@ -60,6 +84,20 @@ export const Header: React.FC<HeaderProps> = ({
             <span>Karşılaştırmalı Analiz</span>
           </button>
         </div>
+
+        {/* Tam Ekran Aç/Kapa (yalnızca ikon) */}
+        <button
+          onClick={handleToggleFullscreen}
+          title={isFullscreen ? 'Tam ekrandan çık' : 'Tam ekran'}
+          aria-label={isFullscreen ? 'Tam ekrandan çık' : 'Tam ekran'}
+          className="ml-auto shrink-0 w-8 h-8 flex items-center justify-center rounded-md text-brass-pale border border-brass/40 bg-brass/10 hover:bg-brass/25 hover:text-parchment-50 transition-colors cursor-pointer"
+        >
+          {isFullscreen ? (
+            <Minimize2 className="w-4 h-4" />
+          ) : (
+            <Maximize2 className="w-4 h-4" />
+          )}
+        </button>
       </div>
     </header>
   );

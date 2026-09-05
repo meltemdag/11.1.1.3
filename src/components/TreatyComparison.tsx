@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { TREATIES } from '../data/treaties';
 import { TreatyProgress } from '../types';
 import { 
   CheckCircle2 
@@ -154,10 +153,8 @@ const COMPARISON_DATA: ComparisonData[] = [
   }
 ];
 
-export const TreatyComparison: React.FC<TreatyComparisonProps> = ({ progress }) => {
+export const TreatyComparison: React.FC<TreatyComparisonProps> = () => {
   const [finished, setFinished] = useState<boolean>(false);
-
-  const completedTreatiesCount = TREATIES.filter(t => progress[t.id]?.completed).length;
 
   const handleFinish = () => {
     setFinished(true);
@@ -185,11 +182,8 @@ export const TreatyComparison: React.FC<TreatyComparisonProps> = ({ progress }) 
       {/* Açıklama ve Yönlendirme Metni */}
       <div className="parchment-surface rounded-xl border-2 border-parchment-400/70 p-3.5 sm:p-4 text-xs sm:text-sm text-ink-light shadow-parchment flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
         <p>
-          17-18. yüzyıl boyunca imzalanan antlaşmaları dış politika, Karadeniz hakimiyeti, diplomasi ve dönüm noktaları üzerinden karşılaştırınız.
+          XVII-XVIII. yüzyıl boyunca imzalanan antlaşmaları dış politika, Karadeniz hakimiyeti, diplomasi ve dönüm noktaları üzerinden karşılaştırınız.
         </p>
-        <span className="text-xs font-semibold text-ink-light parchment-deep px-3 py-1 rounded-full shrink-0 border border-brass/50">
-          {completedTreatiesCount} / {TREATIES.length} Tamamlandı
-        </span>
       </div>
 
       {finished && (
@@ -200,7 +194,7 @@ export const TreatyComparison: React.FC<TreatyComparisonProps> = ({ progress }) 
           <div>
             <h4 className="font-antique font-bold text-sm sm:text-base">Etkinlik Başarıyla Tamamlandı</h4>
             <p className="text-xs sm:text-sm text-[#4a5423] mt-0.5">
-              17-18. Yüzyıl Osmanlı Diplomasisi analizini, neden-sonuç sınıflandırmalarını ve antlaşma kronolojisini eksiksiz tamamladınız.
+              XVII-XVIII. Yüzyıl Osmanlı Diplomasisi analizini, neden-sonuç sınıflandırmalarını ve antlaşma kronolojisini eksiksiz tamamladınız.
             </p>
           </div>
         </div>

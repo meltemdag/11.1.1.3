@@ -172,8 +172,8 @@ export const TREATIES: Treaty[] = [
     mapCoords: { x: 35.0, y: 32.9 },
     contextNote: 'Fransa’nın diplomatik ara buluculuğuyla imzalanmış; Fransa’ya 1740’ta kapitülasyonların sürekli hale getirilmesi hakkı tanınmıştır.',
     criticalProvision: 'Belgrad Osmanlı’ya iade edilecek; Rusya Karadeniz’de savaş ve ticaret gemisi bulunduramayacaktır.',
-    memoryTip: '18. yüzyılda Batı’da imzalanan son kazançlı antlaşmadır; Tuna savunma hattı ve Karadeniz’in Türk gölü statüsü korunmuştur.',
-    keyHighlight: '18. yüzyılda Osmanlı Devleti’nin Batı’da imzaladığı son kazançlı antlaşmadır.',
+    memoryTip: 'XVIII. yüzyılda Batı’da imzalanan son kazançlı antlaşmadır; Tuna savunma hattı ve Karadeniz’in Türk gölü statüsü korunmuştur.',
+    keyHighlight: 'XVIII. yüzyılda Osmanlı Devleti’nin Batı’da imzaladığı son kazançlı antlaşmadır.',
     items: [
       {
         id: 'b-c1',
@@ -274,7 +274,7 @@ export const CAUSALITY_CONNECTIONS: CausalityConnection[] = [
     toTreatyId: 'prut',
     previousConsequence: 'Karlofça ile batıda ve kuzeyde uğranılan devasa toprak kayıpları ve Orta Avrupa üstünlüğünün sona ermesi',
     nextCause: 'Devlet ricalinde ve orduda kaybedilen toprakları geri alma arzusunun doğması ve Azak Kalesi’nin geri alınması hedefi',
-    transitionNote: 'Karlofça’nın yarattığı derin kayıp duygusu, Osmanlı Devleti’nin 18. yüzyıl başındaki dış politikasını bütünüyle "kayıpları geri alma" çizgisine taşımıştır.'
+    transitionNote: 'Karlofça’nın yarattığı derin kayıp duygusu, Osmanlı Devleti’nin XVIII. yüzyıl başındaki dış politikasını bütünüyle "kayıpları geri alma" çizgisine taşımıştır.'
   },
   {
     fromTreatyId: 'prut',
@@ -310,7 +310,7 @@ export const DIPLOMATIC_STAGES = [
   },
   {
     title: '3. Aşama: Mevcut Gücü Koruma ve Son Kazanç (1739)',
-    desc: 'Belgrad Antlaşması ile Tuna savunma hattı yeniden güvenceye alınmış ve 18. yüzyılın son büyük diplomatik başarısı elde edilmiştir.'
+    desc: 'Belgrad Antlaşması ile Tuna savunma hattı yeniden güvenceye alınmış ve XVIII. yüzyılın son büyük diplomatik başarısı elde edilmiştir.'
   },
   {
     title: '4. Aşama: Varlık Mücadelesi ve Ağır Şartlar (1774)',
