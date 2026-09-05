@@ -86,13 +86,13 @@ export const MapExplorer: React.FC<MapExplorerProps> = ({ progress, onSelectTrea
                   }`}
                   aria-label={`${treaty.title} durağı`}
                 >
-                  {/* Açılmamış / Neden-Sonucu Tamamlanmamış Pinler İçin Sıcak Akkor Işık (Ampul Işığı) Efekti */}
+                  {/* Açılmamış / Neden-Sonucu Tamamlanmamış Pinler İçin Mühür Kırmızısı Sıcak Işıma Efekti */}
                   {!isCompleted && (
                     <>
-                      {/* Dışa doğru süzülen yumuşak akkor ışık dalgası */}
-                      <span className="absolute left-[44%] top-[72%] w-8 h-8 rounded-full bg-[#fef08a]/35 animate-warm-light-wave pointer-events-none blur-[1px]" />
-                      {/* Mührün merkezinde yanan yumuşak akkor lamba aurası */}
-                      <span className="absolute left-[44%] top-[72%] -translate-x-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-[#fffdf0]/90 animate-warm-light pointer-events-none" />
+                      {/* Dışa doğru süzülen yumuşak kırmızı ışık dalgası */}
+                      <span className="absolute left-[44%] top-[72%] w-8 h-8 rounded-full bg-[#9b3030]/30 animate-warm-light-wave pointer-events-none blur-[1px]" />
+                      {/* Mührün merkezinde yanan yumuşak kırmızı ışıma aurası */}
+                      <span className="absolute left-[44%] top-[72%] -translate-x-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-[#fbeaea]/90 animate-warm-light pointer-events-none" />
                     </>
                   )}
 
@@ -108,7 +108,7 @@ export const MapExplorer: React.FC<MapExplorerProps> = ({ progress, onSelectTrea
                       isCompleted
                         ? 'drop-shadow-[0_4px_8px_rgba(47,58,16,0.6)]'
                         : isSelected
-                        ? 'drop-shadow-[0_5px_10px_rgba(0,0,0,0.6)] drop-shadow-[0_0_8px_rgba(254,240,138,0.7)]'
+                        ? 'drop-shadow-[0_5px_10px_rgba(0,0,0,0.6)] drop-shadow-[0_0_10px_rgba(155,48,48,0.85)]'
                         : 'drop-shadow-[0_4px_8px_rgba(124,29,29,0.5)]'
                     }`}
                   />
@@ -129,7 +129,7 @@ export const MapExplorer: React.FC<MapExplorerProps> = ({ progress, onSelectTrea
                       {isCompleted ? (
                         <CheckCircle2 className="w-3 h-3 text-olive-seal" />
                       ) : (
-                        <span className="w-2 h-2 rounded-full bg-amber-100 shadow-[0_0_6px_#fef08a] animate-pulse shrink-0" />
+                        <span className="w-2 h-2 rounded-full bg-rose-100 shadow-[0_0_6px_#9b3030] animate-pulse shrink-0" />
                       )}
                       <span>{treaty.title} ({treaty.year})</span>
                     </span>
@@ -245,14 +245,14 @@ export const MapExplorer: React.FC<MapExplorerProps> = ({ progress, onSelectTrea
               {/* Olay Bilgi Kartına Git Butonu */}
               <button
                 onClick={() => onSelectTreaty(selectedTreaty.id)}
-                className="w-full group flex items-center justify-between py-2.5 px-3.5 bg-gradient-to-r from-ink via-ink-light to-ink hover:from-ink-light hover:via-ink hover:to-ink-light text-parchment-100 rounded-xl text-xs sm:text-sm font-semibold shadow-wax hover:shadow-parchment transition-all cursor-pointer border border-brass/50 animate-subtle-pulse"
+                className="w-full group flex items-center justify-between py-2.5 px-3.5 bg-gradient-to-r from-seal-dark via-seal to-seal-dark hover:from-seal hover:via-seal-dark hover:to-seal text-parchment-100 rounded-xl text-xs sm:text-sm font-semibold shadow-wax hover:shadow-parchment transition-all cursor-pointer border border-brass/70 animate-seal-pulse"
               >
                 <div className="text-left">
-                  <div className="font-antique font-bold text-parchment-50 group-hover:text-brass-pale transition-colors">
+                  <div className="font-antique font-bold text-parchment-50 group-hover:text-brass-pale transition-colors text-sm sm:text-base">
                     {getTreatyQuestion(selectedTreaty.id)}
                   </div>
                 </div>
-                <div className="w-7 h-7 rounded-lg bg-parchment-100/10 group-hover:bg-brass group-hover:text-ink flex items-center justify-center transition-all shrink-0">
+                <div className="w-7 h-7 rounded-lg bg-black/20 group-hover:bg-brass group-hover:text-ink text-parchment-100 flex items-center justify-center transition-all shrink-0 border border-brass/40">
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                 </div>
               </button>
