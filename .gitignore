@@ -9,6 +9,9 @@ dist/
 dist-ssr/
 *.local
 
+# Arşiv dosyaları
+*.zip
+
 # Ortam ve sistem dosyaları
 .env
 .env.*
