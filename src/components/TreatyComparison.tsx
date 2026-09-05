@@ -165,7 +165,13 @@ export const TreatyComparison: React.FC<TreatyComparisonProps> = ({
   const notifyScormCompleted = () => {
     try {
       const win = window as any;
-      if (win.SCORM_API_WRAPPER && typeof win.SCORM_API_WRAPPER.setCompleted === 'function') {
+      if (win.SCORM) {
+        if (typeof win.SCORM.complete === 'function') {
+          win.SCORM.complete(true);
+        } else if (typeof win.SCORM.setStatus === 'function') {
+          win.SCORM.setStatus('completed');
+        }
+      } else if (win.SCORM_API_WRAPPER && typeof win.SCORM_API_WRAPPER.setCompleted === 'function') {
         win.SCORM_API_WRAPPER.setCompleted();
       } else if (win.pipwerks && win.pipwerks.SCORM) {
         win.pipwerks.SCORM.set("cmi.core.lesson_status", "completed");

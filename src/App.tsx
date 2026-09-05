@@ -30,13 +30,36 @@ export const App: React.FC = () => {
   // İlerleme yalnızca oturum/sayfa bazlıdır (localStorage kullanılmaz)
   const [progress, setProgress] = useState<TreatyProgress>(createInitialProgress);
 
-  // Önceki yerel depolama verilerini temizleme
+  // Önceki yerel depolama verilerini temizleme ve SCORM başlatma
   useEffect(() => {
     try {
       localStorage.removeItem('osmanli_antlasmalar_ilerleme');
     } catch {
       // sessiz devam
     }
+
+    try {
+      const win = window as any;
+      win.SCORM?.initialize?.();
+      win.SCORM?.setStatus?.('completed');
+    } catch {
+      // sessiz devam
+    }
+
+    const handleUnload = () => {
+      try {
+        const win = window as any;
+        win.SCORM?.terminate?.();
+      } catch {
+        // sessiz devam
+      }
+    };
+
+    window.addEventListener('beforeunload', handleUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleUnload);
+      handleUnload();
+    };
   }, []);
 
   const handleUpdateProgress = (
