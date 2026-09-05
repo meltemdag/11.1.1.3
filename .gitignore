@@ -1,0 +1,16 @@
+# Büyük veri ve PDF dosyaları
+*.pdf
+
+# Bağımlılıklar
+node_modules/
+
+# Derleme çıktıları
+dist/
+dist-ssr/
+*.local
+
+# Ortam ve sistem dosyaları
+.env
+.env.*
+.DS_Store
+Thumbs.db
