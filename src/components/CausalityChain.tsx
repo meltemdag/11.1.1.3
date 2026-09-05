@@ -1,10 +1,10 @@
 import React, { useState, useMemo } from 'react';
 import { TREATIES } from '../data/treaties';
+import { TreatyId } from '../types';
 import {
   CheckCircle2,
   XCircle,
   RotateCcw,
-  Link2,
   ArrowRight
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
@@ -14,106 +14,152 @@ interface CausalityChainProps {
   onGoToPrevTab?: () => void;
 }
 
-interface ChainLinkItem {
+interface ChainItem {
   id: string;
-  targetSlotIndex: number;
+  treatyId: TreatyId;
+  type: 'cause' | 'effect';
   text: string;
-  hint: string;
 }
 
 // Tarihî temaya uygun konfeti renkleri: parşömen, pirinç altın, mühür kırmızısı
 const CONFETTI_COLORS = ['#e8d5a4', '#a3762a', '#7c1d1d', '#f6efdc', '#6f5228'];
 
-const CHAIN_LINKS: ChainLinkItem[] = [
+// Halka metinleri ders kitabından (11.1.1.pdf) derlenmiştir ve Karadeniz'in statüsündeki
+// değişimi anlatan KESİNTİSİZ tek bir zincir kurar: her antlaşmanın SONUCU bir sonraki
+// antlaşmanın NEDENİNE bağlanır (Karlofça: Kaynak F/G · Prut: Kaynak J · Pasarofça: Kaynak L/N
+// · Belgrad: Kaynak Q/T · Küçük Kaynarca: Kaynak U/Y/AA).
+const CHAIN_ITEMS: ChainItem[] = [
   {
-    id: 'link_1',
-    targetSlotIndex: 0,
-    text: "Azak Kalesi'ni kaybeden devlet Karadeniz'i korumak için sefere çıktı; zaferle kale geri alınarak Karadeniz'in güvenliği yeniden sağlandı.",
-    hint: "İpucu: Kaybedilen toprakları geri alma ümidinin doğduğu süreci düşününüz."
+    id: 'k-neden',
+    treatyId: 'karlofca',
+    type: 'cause',
+    text: 'Zenta bozgunu sonrası savaş yorgunu devlet, Karadeniz\'i savunamayacak duruma düştü.'
   },
   {
-    id: 'link_2',
-    targetSlotIndex: 1,
-    text: "Kuzeydeki zaferin cesaretiyle kayıpları telafi savaşı başlatıldı; batıda yenilgi yaşansa da Karadeniz yabancı donanmalara kapalı tutuldu.",
-    hint: "İpucu: Lale Devri'nin başladığı süreci düşününüz."
+    id: 'k-sonuc',
+    treatyId: 'karlofca',
+    type: 'effect',
+    text: 'Azak Kalesi Ruslara bırakıldı; Karadeniz ilk kez kuzeyden tehditle tanıştı.'
   },
   {
-    id: 'link_3',
-    targetSlotIndex: 2,
-    text: "Rusya'nın Karadeniz'e inme hamlesine karşı açılan savaş kazanıldı; Rus gemileri yasaklanarak Karadeniz'in Türk gölü statüsü son kez onaylandı.",
-    hint: "İpucu: XVIII. yüzyılda imzalanan son kazançlı antlaşmayı düşününüz."
+    id: 'p-neden',
+    treatyId: 'prut',
+    type: 'cause',
+    text: 'Karadeniz\'in anahtarını geri almak isteyen Osmanlı, I. Petro\'yu Prut\'ta kuşattı.'
   },
   {
-    id: 'link_4',
-    targetSlotIndex: 3,
-    text: "Karadeniz yasağını kırmak isteyen Rusya ile yapılan savaş kaybedildi; Kırım'ın kaybı ve Rus donanmasıyla Türk gölü dönemi sona erdi.",
-    hint: "İpucu: Şartları en ağır olan antlaşmayı düşününüz."
+    id: 'p-sonuc',
+    treatyId: 'prut',
+    type: 'effect',
+    text: 'Prut zaferiyle Azak geri alındı; Karadeniz yeniden yabancı donanmalara kapandı.'
+  },
+  {
+    id: 'pas-neden',
+    treatyId: 'pasarofca',
+    type: 'cause',
+    text: 'Avusturya\'nın Venedik yanında savaşa girmesi Tuna hattında yenilgiyi getirdi.'
+  },
+  {
+    id: 'pas-sonuc',
+    treatyId: 'pasarofca',
+    type: 'effect',
+    text: 'Belgrad kaybedildi ama Karadeniz yabancı donanmalara hâlâ kapalı kaldı.'
+  },
+  {
+    id: 'b-neden',
+    treatyId: 'belgrad',
+    type: 'cause',
+    text: 'Karadeniz\'de ilerleyen Rusya\'ya karşı Avusturya cephesinde Grocka zaferi kazanıldı.'
+  },
+  {
+    id: 'b-sonuc',
+    treatyId: 'belgrad',
+    type: 'effect',
+    text: 'Rus gemileri yasaklandı; Karadeniz\'in Türk gölü statüsü son kez onaylandı.'
+  },
+  {
+    id: 'kk-neden',
+    treatyId: 'kucuk_kaynarca',
+    type: 'cause',
+    text: 'Karadeniz yasağını kırmak isteyen II. Katerina, savaşı Kırım\'a taşıdı.'
+  },
+  {
+    id: 'kk-sonuc',
+    treatyId: 'kucuk_kaynarca',
+    type: 'effect',
+    text: 'Kırım elden çıktı, Rus gemileri Boğazlardan geçti; Türk gölü dönemi sona erdi.'
   }
 ];
 
 export const CausalityChain: React.FC<CausalityChainProps> = ({ onGoToSummary }) => {
-  const [placedLinks, setPlacedLinks] = useState<{ [slotIndex: number]: string }>({});
-  const [selectedLinkId, setSelectedLinkId] = useState<string | null>(null);
+  const [placed, setPlaced] = useState<{ [slotKey: string]: string }>({});
+  const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [lastFeedback, setLastFeedback] = useState<{
     type: 'correct' | 'wrong' | null;
     message: string;
   }>({ type: null, message: '' });
 
-  const isChainCompleted = Object.keys(placedLinks).length === CHAIN_LINKS.length;
+  const isChainCompleted = Object.keys(placed).length === CHAIN_ITEMS.length;
 
-  // Havuzda kalan yerleştirilmemiş bağlantı halkaları (karışık sırada)
-  const unplacedLinks = useMemo(() => {
-    const placedValues = new Set(Object.values(placedLinks));
-    const remaining = CHAIN_LINKS.filter(link => !placedValues.has(link.id));
+  const slotKey = (treatyId: TreatyId, type: 'cause' | 'effect') => `${treatyId}::${type}`;
+
+  // Havuzda kalan yerleştirilmemiş halkalar (karışık sırada)
+  const unplacedItems = useMemo(() => {
+    const placedValues = new Set(Object.values(placed));
+    const remaining = CHAIN_ITEMS.filter(item => !placedValues.has(item.id));
     return [...remaining].sort((a, b) => b.id.localeCompare(a.id));
-  }, [placedLinks]);
+  }, [placed]);
 
-  const handlePlaceLink = (linkItem: ChainLinkItem, slotIndex: number) => {
-    const isCorrect = linkItem.targetSlotIndex === slotIndex;
+  const handlePlaceItem = (item: ChainItem, targetTreaty: TreatyId, targetType: 'cause' | 'effect') => {
+    const isCorrect = item.treatyId === targetTreaty && item.type === targetType;
 
     if (isCorrect) {
-      const updated = { ...placedLinks, [slotIndex]: linkItem.id };
-      setPlacedLinks(updated);
-      setSelectedLinkId(null);
-      setLastFeedback({
-        type: 'correct',
-        message: 'Doğru'
-      });
+      const updated = { ...placed, [slotKey(targetTreaty, targetType)]: item.id };
+      setPlaced(updated);
+      setSelectedItemId(null);
+      setLastFeedback({ type: 'correct', message: 'Doğru' });
 
-      if (Object.keys(updated).length === CHAIN_LINKS.length) {
+      if (Object.keys(updated).length === CHAIN_ITEMS.length) {
         confetti({
-          particleCount: 90,
-          spread: 80,
-          origin: { y: 0.65 },
+          particleCount: 100,
+          spread: 85,
+          origin: { y: 0.6 },
           colors: CONFETTI_COLORS
         });
       }
     } else {
       setLastFeedback({
         type: 'wrong',
-        message: linkItem.hint
+        message: 'Bu halkaya uymadı. Maddenin hangi antlaşmaya ait olduğunu ve akışta neden mi sonuç mu olduğunu yeniden değerlendiriniz.'
       });
     }
   };
 
+  const handleRemoveItem = (key: string) => {
+    const updated = { ...placed };
+    delete updated[key];
+    setPlaced(updated);
+    setLastFeedback({ type: null, message: '' });
+  };
+
   const handleReset = () => {
-    setPlacedLinks({});
-    setSelectedLinkId(null);
+    setPlaced({});
+    setSelectedItemId(null);
     setLastFeedback({ type: null, message: '' });
   };
 
   // Drag & drop
-  const handleDragStart = (e: React.DragEvent, linkItem: ChainLinkItem) => {
-    e.dataTransfer.setData('text/plain', JSON.stringify(linkItem));
+  const handleDragStart = (e: React.DragEvent, item: ChainItem) => {
+    e.dataTransfer.setData('text/plain', JSON.stringify(item));
   };
 
-  const handleDrop = (e: React.DragEvent, slotIndex: number) => {
+  const handleDrop = (e: React.DragEvent, targetTreaty: TreatyId, targetType: 'cause' | 'effect') => {
     e.preventDefault();
     try {
       const dataStr = e.dataTransfer.getData('text/plain');
       if (dataStr) {
-        const item: ChainLinkItem = JSON.parse(dataStr);
-        handlePlaceLink(item, slotIndex);
+        const item: ChainItem = JSON.parse(dataStr);
+        handlePlaceItem(item, targetTreaty, targetType);
       }
     } catch (err) {
       console.error(err);
@@ -124,6 +170,94 @@ export const CausalityChain: React.FC<CausalityChainProps> = ({ onGoToSummary })
     e.preventDefault();
   };
 
+  // Zincir halkaları: her antlaşma için [Neden halkası] – [Antlaşma mührü] – [Sonuç halkası].
+  // Negatif kenar boşlukları ve almaşık z-katmanlarıyla halkalar iç içe geçerek
+  // gerçek bir zincir gibi birbirine bağlı görünür; ayrı ayrı durmazlar.
+  let linkIndex = 0;
+
+  const renderRing = (treatyId: TreatyId, type: 'cause' | 'effect') => {
+    const key = slotKey(treatyId, type);
+    const placedId = placed[key];
+    const placedItem = CHAIN_ITEMS.find(i => i.id === placedId);
+    const zIndex = linkIndex % 2 === 0 ? 20 : 10;
+    linkIndex++;
+
+    const treaty = TREATIES.find(t => t.id === treatyId)!;
+    const slotTitle = `${treaty.title} — ${type === 'cause' ? 'Nedenleri' : 'Sonuçları'}`;
+    const isHighlightable = !!selectedItemId;
+
+    return (
+      <div
+        key={key}
+        onDrop={(e) => handleDrop(e, treatyId, type)}
+        onDragOver={handleDragOver}
+        onClick={() => {
+          if (!selectedItemId) return;
+          const item = CHAIN_ITEMS.find(i => i.id === selectedItemId);
+          if (item) handlePlaceItem(item, treatyId, type);
+        }}
+        title={placedItem ? placedItem.text : slotTitle}
+        style={{ zIndex }}
+        className={`relative shrink-0 -ml-3.5 w-[108px] min-h-[168px] sm:w-[116px] sm:min-h-[176px] xl:w-[124px] xl:min-h-[188px] rounded-full flex flex-col items-center justify-center p-2 sm:p-2.5 text-center transition-all cursor-pointer ${
+          placedItem
+            ? 'bg-[#eef0da] border-[3px] border-olive-seal shadow-parchment'
+            : isHighlightable
+            ? 'bg-brass/15 border-[3px] border-seal ring-2 ring-seal/40 cursor-pointer animate-pulse'
+            : 'parchment-deep border-[3px] border-brass/80 hover:border-brass shadow-parchment'
+        }`}
+      >
+        {placedItem ? (
+          <div className="flex flex-col items-center justify-center space-y-1 text-center w-full">
+            <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-olive-seal text-parchment-100 flex items-center justify-center shadow-2xs shrink-0">
+              <CheckCircle2 className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+            </div>
+            <p className="text-[9.5px] sm:text-[10px] xl:text-[11px] font-semibold text-ink leading-snug">
+              {placedItem.text}
+            </p>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleRemoveItem(key);
+              }}
+              className="text-[9.5px] sm:text-[10px] text-seal hover:text-seal-dark font-bold underline hover:no-underline cursor-pointer shrink-0"
+              title="Halkayı kaldır"
+            >
+              Kaldır
+            </button>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center space-y-0.5 text-center">
+            <span className={`text-[8.5px] sm:text-[9px] font-bold uppercase tracking-wider ${type === 'cause' ? 'text-brass' : 'text-seal'}`}>
+              {type === 'cause' ? 'Neden' : 'Sonuç'}
+            </span>
+            <span className="text-[10px] sm:text-[10.5px] font-semibold text-ink-soft leading-tight">
+              {isHighlightable ? 'Buraya Yerleştir' : 'Sürükle veya seç'}
+            </span>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const renderSeal = (treatyId: TreatyId, year: number, shortName: string) => {
+    const zIndex = linkIndex % 2 === 0 ? 30 : 40;
+    linkIndex++;
+    return (
+      <div
+        key={`seal-${treatyId}`}
+        style={{ zIndex }}
+        className="relative shrink-0 -ml-3.5 w-12 h-12 sm:w-[52px] sm:h-[52px] xl:w-[56px] xl:h-[56px] rounded-full bg-gradient-to-b from-seal-light via-seal to-seal-dark text-parchment-100 flex flex-col items-center justify-center p-0.5 text-center border-[3px] border-brass shadow-wax"
+      >
+        <span className="text-[10px] sm:text-[11px] font-black font-mono text-brass-pale leading-none">
+          {year}
+        </span>
+        <span className="text-[7.5px] sm:text-[8.5px] font-bold text-parchment-100 leading-tight mt-0.5 px-0.5 text-center">
+          {shortName}
+        </span>
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-4">
       {/* Ana Kart */}
@@ -131,7 +265,7 @@ export const CausalityChain: React.FC<CausalityChainProps> = ({ onGoToSummary })
         {/* Açıklama ve Sıfırlama Şeridi */}
         <div className="parchment-deep px-5 sm:px-6 py-3 border-b border-parchment-400/70 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs sm:text-sm text-ink-light">
           <div>
-            Antlaşmalar arasındaki gelişmeleri inceleyiniz; Karadeniz'in statüsündeki değişimi ve neden-sonuç ilişkilerini dikkate alarak zincir halkalarını doğru sırayla yerleştiriniz.
+            Aşağıdaki maddeleri inceleyiniz; Karadeniz'in statüsündeki değişimi anlatan zinciri kurunuz. Her antlaşmanın solundaki halkaya o antlaşmayı doğuran NEDENİ, sağındaki halkaya ise SONUÇLARINI yerleştiriniz.
           </div>
           <button
             onClick={handleReset}
@@ -142,116 +276,47 @@ export const CausalityChain: React.FC<CausalityChainProps> = ({ onGoToSummary })
           </button>
         </div>
 
-        {/* Üst Alan: Yatay Zincir Halkaları Rayı (Tüm Ekran Genişliğini Dolduran Yapı) */}
-        <div className="py-4 px-2 sm:px-4 bg-parchment-300/40 border-b border-parchment-400/70">
-          <div className="overflow-x-auto pb-1 pt-1 scrollbar-thin">
-            <div className="w-full flex items-center justify-between min-w-[800px] lg:min-w-0 px-1 sm:px-2">
-              {TREATIES.map((treaty, idx) => {
-                const isLast = idx === TREATIES.length - 1;
-                const slotIndex = idx;
-                const placedLinkId = placedLinks[slotIndex];
-                const placedLinkItem = CHAIN_LINKS.find(l => l.id === placedLinkId);
-
-                return (
-                  <React.Fragment key={treaty.id}>
-                    {/* Antlaşma Yuvarlak Halkası (balmumu mühür) */}
-                    <div className="flex flex-col items-center shrink-0">
-                      <div className="w-12 h-12 sm:w-13 sm:h-13 lg:w-14 lg:h-14 rounded-full bg-gradient-to-b from-seal-light via-seal to-seal-dark text-parchment-100 flex flex-col items-center justify-center p-0.5 text-center border-2 border-brass shadow-wax relative group transition-transform hover:scale-105 shrink-0">
-                        <span className="text-[10.5px] sm:text-[11px] lg:text-xs font-black font-mono text-brass-pale leading-none">
-                          {treaty.year}
-                        </span>
-                        <span className="text-[8px] sm:text-[8.5px] lg:text-[9.5px] font-bold text-parchment-100 leading-tight mt-0.5 px-0.5 text-center">
-                          {treaty.title.replace(' Antlaşması', '')}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* İki Antlaşma Arasındaki Bağlantı Alanı (Teması Kesinlikle Engelleyen Güvenli Ayrım) */}
-                    {!isLast && (
-                      <div className="flex-1 flex items-center justify-center min-w-0 px-1 sm:px-1.5 lg:px-2">
-                        {/* Sol Bağlantı Çubuğu (Garantili Boşluk) */}
-                        <div className="flex-1 min-w-[12px] sm:min-w-[16px] lg:min-w-[20px] h-0.5 sm:h-1 bg-gradient-to-r from-brass/50 to-brass rounded-full shrink-0" />
-
-                        {/* Yuvarlak Zincir Bağlantı Yuvası */}
-                        <div
-                          onDrop={(e) => handleDrop(e, slotIndex)}
-                          onDragOver={handleDragOver}
-                          onClick={() => {
-                            if (selectedLinkId) {
-                              const item = CHAIN_LINKS.find(l => l.id === selectedLinkId);
-                              if (item) handlePlaceLink(item, slotIndex);
-                            }
-                          }}
-                          className={`w-[136px] min-h-[136px] sm:w-[150px] sm:min-h-[150px] md:w-[170px] md:h-[170px] md:min-h-[170px] lg:w-[190px] lg:h-[190px] xl:w-[210px] xl:h-[210px] rounded-[2rem] md:rounded-full flex flex-col items-center justify-center p-2 sm:p-2.5 lg:p-3 text-center transition-all relative shrink-0 mx-1 sm:mx-1.5 ${
-                            placedLinkItem
-                              ? 'bg-[#eef0da] border-2 sm:border-3 border-olive-seal text-ink shadow-parchment ring-2 ring-olive-seal/40'
-                              : selectedLinkId
-                              ? 'bg-seal/10 border-2 sm:border-3 border-dashed border-seal ring-4 ring-seal/30 cursor-pointer animate-pulse scale-105'
-                              : 'bg-brass/10 border-2 sm:border-3 border-dashed border-brass/70 hover:border-brass hover:bg-brass/20 cursor-pointer shadow-inner'
-                          }`}
-                          title={placedLinkItem ? placedLinkItem.text : undefined}
-                        >
-                          {placedLinkItem ? (
-                            <div className="flex flex-col items-center justify-center space-y-1 text-center px-2 py-0.5 w-full max-w-[94%]">
-                              <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-olive-seal text-parchment-100 flex items-center justify-center shadow-2xs shrink-0">
-                                <CheckCircle2 className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
-                              </div>
-                              <p className="text-[11px] sm:text-[11.5px] md:text-xs lg:text-[12.5px] xl:text-[13px] font-semibold text-ink leading-snug">
-                                {placedLinkItem.text}
-                              </p>
-                            </div>
-                          ) : (
-                            <div className="flex flex-col items-center justify-center space-y-1 p-1 text-center">
-                              <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-brass/25 text-brass flex items-center justify-center border border-brass/50 shadow-2xs">
-                                <Link2 className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                              </div>
-                              <span className="text-[11px] sm:text-xs font-semibold text-ink-light leading-tight">
-                                {selectedLinkId ? 'Buraya Yerleştir' : 'Sürükle veya seç'}
-                              </span>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Sağ Bağlantı Çubuğu (Garantili Boşluk) */}
-                        <div className="flex-1 min-w-[12px] sm:min-w-[16px] lg:min-w-[20px] h-0.5 sm:h-1 bg-gradient-to-r from-brass to-brass/50 rounded-full shrink-0" />
-                      </div>
-                    )}
-                  </React.Fragment>
-                );
-              })}
+        {/* Zincir Rayı: iç içe geçmiş halkalar */}
+        <div className="py-5 px-2 sm:px-4 bg-parchment-300/40 border-b border-parchment-400/70">
+          <div className="overflow-x-auto pb-2 pt-1 scrollbar-thin">
+            <div className="flex items-center justify-center min-w-[1000px] lg:min-w-0 px-2">
+              {TREATIES.map((treaty) => (
+                <React.Fragment key={treaty.id}>
+                  {renderRing(treaty.id, 'cause')}
+                  {renderSeal(
+                    treaty.id,
+                    treaty.year,
+                    treaty.title.replace(' Antlaşması', '')
+                  )}
+                  {renderRing(treaty.id, 'effect')}
+                </React.Fragment>
+              ))}
             </div>
           </div>
         </div>
 
         {/* Alt Alan: Yerleştirilmeyi Bekleyen Maddeler Havuzu */}
-        {unplacedLinks.length > 0 && (
+        {unplacedItems.length > 0 && (
           <div className="p-5 sm:p-6 space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-              {unplacedLinks.map((linkItem) => {
-                const isSelected = selectedLinkId === linkItem.id;
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+              {unplacedItems.map((item) => {
+                const isSelected = selectedItemId === item.id;
 
                 return (
                   <div
-                    key={linkItem.id}
+                    key={item.id}
                     draggable
-                    onDragStart={(e) => handleDragStart(e, linkItem)}
-                    onClick={() => setSelectedLinkId(isSelected ? null : linkItem.id)}
-                    className={`rounded-2xl p-4 transition-all parchment-deep shadow-2xs cursor-grab active:cursor-grabbing select-none flex flex-col justify-between border-2 ${
+                    onDragStart={(e) => handleDragStart(e, item)}
+                    onClick={() => setSelectedItemId(isSelected ? null : item.id)}
+                    className={`rounded-2xl p-3.5 transition-all parchment-deep shadow-2xs cursor-grab active:cursor-grabbing select-none flex flex-col justify-between border-2 ${
                       isSelected
                         ? 'border-seal ring-2 ring-seal/40 bg-seal/10 shadow-parchment scale-[1.02]'
                         : 'border-parchment-500/70 hover:border-brass hover:shadow-parchment'
                     }`}
                   >
-                    <div className="flex items-start gap-2.5">
-                      <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 mt-0.5 border ${
-                        isSelected ? 'bg-seal text-parchment-100 border-seal' : 'bg-brass/20 text-brass border-brass/50'
-                      }`}>
-                        <Link2 className="w-3.5 h-3.5" />
-                      </div>
-                      <p className="text-xs sm:text-sm text-ink leading-relaxed font-semibold">
-                        {linkItem.text}
-                      </p>
-                    </div>
+                    <p className="text-xs sm:text-sm text-ink leading-relaxed font-semibold">
+                      {item.text}
+                    </p>
                   </div>
                 );
               })}
@@ -260,7 +325,7 @@ export const CausalityChain: React.FC<CausalityChainProps> = ({ onGoToSummary })
         )}
 
         {/* Alt Geri Bildirim Şeridi */}
-        {lastFeedback.type && unplacedLinks.length > 0 && (
+        {lastFeedback.type && unplacedItems.length > 0 && (
           <div className="px-5 sm:px-6 pb-4">
             <div
               className={`p-2.5 sm:p-3 rounded-xl border text-xs sm:text-sm flex items-center gap-2.5 transition-all shadow-2xs ${
