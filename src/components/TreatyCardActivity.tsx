@@ -6,7 +6,8 @@ import {
   XCircle,
   RotateCcw,
   ArrowLeft,
-  ArrowRight
+  ArrowRight,
+  X
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -15,6 +16,7 @@ interface TreatyCardActivityProps {
   onSelectTreaty?: (id: TreatyId) => void;
   progress: TreatyProgress;
   onUpdateProgress: (id: TreatyId, causes: string[], effects: string[], isCompleted: boolean) => void;
+  onClose?: () => void;
   onGoToNextTab?: () => void;
   onGoToPrevTab?: () => void;
 }
@@ -26,6 +28,7 @@ export const TreatyCardActivity: React.FC<TreatyCardActivityProps> = ({
   currentTreatyId,
   progress,
   onUpdateProgress,
+  onClose,
   onGoToNextTab,
   onGoToPrevTab
 }) => {
@@ -46,6 +49,17 @@ export const TreatyCardActivity: React.FC<TreatyCardActivityProps> = ({
     type: 'correct' | 'wrong' | null;
     message: string;
   }>({ type: null, message: '' });
+
+  // Escape tuşu ile modalı kapatma desteği
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        (onClose || onGoToPrevTab)?.();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose, onGoToPrevTab]);
 
   // Mevcut antlaşma değiştiğinde veya kayıtlı ilerleme olduğunda durum güncelleme
   useEffect(() => {
@@ -203,54 +217,85 @@ export const TreatyCardActivity: React.FC<TreatyCardActivityProps> = ({
   );
 
   const boardTitles = getBoardTitles(treaty.id);
+  const isCurrentTreatyCompleted = progress[treaty.id]?.completed || (placedCauses.length + placedEffects.length === treaty.items.length);
 
   return (
-    <div className="space-y-4">
-      {/* Ana Çalışma Alanı: Olay Bilgi Kartı Formatı */}
-      <div className="parchment-surface rounded-2xl border-2 border-parchment-400/70 shadow-parchment overflow-hidden">
-        {/* Görev Açıklaması */}
-        <div className="parchment-deep px-5 sm:px-6 py-3.5 border-b border-parchment-400/70 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs sm:text-sm text-ink-light">
-          <div>
-            Antlaşmaya ait gelişmeleri inceleyiniz; olayları antlaşmaya yol açan nedenler ve antlaşma sonrasında ortaya çıkan sonuçlar olarak ilgili panolara yerleştiriniz.
+    <div
+      className="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 md:p-6 overflow-y-auto animate-fade-in"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          (onClose || onGoToPrevTab)?.();
+        }
+      }}
+    >
+      {/* Modal Kartı */}
+      <div className="relative w-full max-w-5xl max-h-[92vh] flex flex-col parchment-surface rounded-2xl border-2 border-brass shadow-parchment-lg overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        {/* Üst Altın Çizgi Bandı */}
+        <div className="h-[3px] w-full bg-gradient-to-r from-brass/20 via-brass-light to-brass/20 shrink-0" />
+
+        {/* Modal Başlık Çubuğu */}
+        <div className="parchment-deep px-5 sm:px-6 py-3.5 border-b border-parchment-400/70 flex items-center justify-between gap-3 shrink-0">
+          <div className="flex items-center gap-2.5">
+            <h2 className="font-antique font-bold text-lg sm:text-xl text-ink tracking-tight">
+              {treaty.title}
+            </h2>
+            <span className="text-xs font-bold text-brass bg-brass/15 px-2.5 py-0.5 rounded-full border border-brass/40">
+              {treaty.year}
+            </span>
           </div>
           <button
-            onClick={handleResetCurrent}
-            className="flex items-center gap-1 text-xs text-ink-soft hover:text-ink px-2 py-1 rounded hover:bg-parchment-300 transition-colors shrink-0 cursor-pointer"
+            onClick={onClose || onGoToPrevTab}
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-ink-soft hover:text-ink hover:bg-parchment-300 transition-colors cursor-pointer"
+            title="Haritaya Dön"
+            aria-label="Kapat"
           >
-            <RotateCcw className="w-3.5 h-3.5" />
-            <span>Kartı Temizle</span>
+            <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Geri Bildirim Şeridi */}
-        {lastFeedback.type && (
-          <div
-            className={`px-5 py-3 border-b text-xs sm:text-sm flex gap-2.5 transition-all ${
-              lastFeedback.type === 'correct'
-                ? 'bg-[#eef0da] text-[#2f3a10] border-olive-seal/40 items-center'
-                : 'bg-[#f5e2de] text-seal-dark border-seal/40 items-start'
-            }`}
-          >
-            {lastFeedback.type === 'correct' ? (
-              <CheckCircle2 className="w-5 h-5 text-olive-seal shrink-0" />
-            ) : (
-              <XCircle className="w-5 h-5 text-seal shrink-0 mt-0.5" />
-            )}
-            {lastFeedback.type === 'correct' ? (
-              <span className="font-bold text-sm">Doğru</span>
-            ) : (
-              <div>
-                <span className="font-bold block">Düşünelim</span>
-                <p className="mt-0.5 leading-relaxed">{lastFeedback.message}</p>
-              </div>
-            )}
+        {/* Modal Gövdesi (Kaydırılabilir İçerik) */}
+        <div className="overflow-y-auto flex-1 p-4 sm:p-6 space-y-5 scrollbar-thin">
+          {/* Görev Açıklaması */}
+          <div className="parchment-deep px-4 sm:px-5 py-3 rounded-xl border border-parchment-400/70 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs sm:text-sm text-ink-light">
+            <p>
+              Antlaşmaya ait gelişmeleri inceleyiniz; olayları antlaşmaya yol açan nedenler ve antlaşma sonrasında ortaya çıkan sonuçlar olarak ilgili panolara yerleştiriniz.
+            </p>
+            <button
+              onClick={handleResetCurrent}
+              className="flex items-center gap-1 text-xs text-ink-soft hover:text-ink px-2 py-1 rounded hover:bg-parchment-300 transition-colors shrink-0 cursor-pointer"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Kartı Temizle</span>
+            </button>
           </div>
-        )}
 
-        {/* Etkileşimli Alan: Hedef Panolar ve Madde Havuzu */}
-        <div className="p-5 sm:p-6 space-y-6">
+          {/* Geri Bildirim Şeridi */}
+          {lastFeedback.type && (
+            <div
+              className={`px-4 py-2.5 rounded-xl border text-xs sm:text-sm flex gap-2.5 transition-all ${
+                lastFeedback.type === 'correct'
+                  ? 'bg-[#eef0da] text-[#2f3a10] border-olive-seal/40 items-center'
+                  : 'bg-[#f5e2de] text-seal-dark border-seal/40 items-start'
+              }`}
+            >
+              {lastFeedback.type === 'correct' ? (
+                <CheckCircle2 className="w-5 h-5 text-olive-seal shrink-0" />
+              ) : (
+                <XCircle className="w-5 h-5 text-seal shrink-0 mt-0.5" />
+              )}
+              {lastFeedback.type === 'correct' ? (
+                <span className="font-bold text-sm">Doğru</span>
+              ) : (
+                <div>
+                  <span className="font-bold block">Düşünelim</span>
+                  <p className="mt-0.5 leading-relaxed">{lastFeedback.message}</p>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* İki Hedef Pano (Nedenler ve Sonuçlar) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* 1. Nedenler Panosu */}
             {renderBoard(
               boardTitles.causes,
@@ -272,7 +317,7 @@ export const TreatyCardActivity: React.FC<TreatyCardActivityProps> = ({
 
           {/* Yerleştirilmeyi Bekleyen Madde Kartları Havuzu */}
           {unplacedItems.length > 0 && (
-            <div className="border-t border-parchment-400/70 pt-5">
+            <div className="border-t border-parchment-400/70 pt-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {unplacedItems.map((item) => {
                   const isSelected = selectedCardId === item.id;
@@ -282,7 +327,7 @@ export const TreatyCardActivity: React.FC<TreatyCardActivityProps> = ({
                       draggable
                       onDragStart={(e) => handleDragStart(e, item)}
                       onClick={() => setSelectedCardId(isSelected ? null : item.id)}
-                      className={`relative border rounded-xl p-4 transition-all parchment-deep shadow-2xs cursor-grab active:cursor-grabbing select-none ${
+                      className={`relative border rounded-xl p-3.5 transition-all parchment-deep shadow-2xs cursor-grab active:cursor-grabbing select-none ${
                         isSelected
                           ? 'border-seal ring-2 ring-seal/40 bg-seal/10 shadow-parchment scale-[1.01]'
                           : 'border-parchment-500/70 hover:border-brass hover:shadow-parchment'
@@ -299,27 +344,42 @@ export const TreatyCardActivity: React.FC<TreatyCardActivityProps> = ({
           )}
         </div>
 
-        {/* Alt Gezinme: Haritaya Dön ve Sonraki Adım Butonları */}
-        <div className="parchment-deep px-5 sm:px-6 py-4 border-t border-parchment-400/70 flex flex-col sm:flex-row items-center justify-center gap-3">
-          {onGoToPrevTab && (
+        {/* Modal Alt Çubuğu */}
+        <div className="parchment-deep px-5 sm:px-6 py-3.5 border-t border-parchment-400/70 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
+          <div className="text-xs text-ink-soft">
+            {isCurrentTreatyCompleted ? (
+              <span className="flex items-center gap-1.5 font-bold text-olive-seal">
+                <CheckCircle2 className="w-4 h-4" />
+                Bu antlaşmanın tüm maddeleri başarıyla yerleştirildi.
+              </span>
+            ) : (
+              <span>Kalan madde: {unplacedItems.length}</span>
+            )}
+          </div>
+
+          <div className="flex gap-3">
+            {allCompleted && onGoToNextTab && (
+              <button
+                onClick={onGoToNextTab}
+                className="flex items-center gap-2 px-6 py-2 rounded-xl text-xs sm:text-sm font-bold text-parchment-100 bg-gradient-to-r from-olive-seal to-[#3d4c18] hover:from-[#3d4c18] hover:to-olive-seal border border-brass/60 shadow-wax hover:shadow-parchment transition-all cursor-pointer animate-pulse"
+              >
+                <span>Diplomasi Zincirine İlerle</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            )}
+
             <button
-              onClick={onGoToPrevTab}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-parchment-100 bg-gradient-to-b from-ink-light to-ink border border-brass/50 hover:from-ink hover:to-ink transition-colors shadow-wax cursor-pointer"
+              onClick={onClose || onGoToPrevTab}
+              className={`flex items-center gap-2 px-5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+                isCurrentTreatyCompleted
+                  ? 'bg-gradient-to-b from-olive-seal to-[#3d4c18] text-parchment-100 border border-brass/60 shadow-wax hover:shadow-parchment'
+                  : 'bg-gradient-to-b from-ink-light to-ink text-parchment-100 border border-brass/50 hover:from-ink hover:to-ink shadow-wax'
+              }`}
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Haritaya Dön</span>
             </button>
-          )}
-
-          {allCompleted && onGoToNextTab && (
-            <button
-              onClick={onGoToNextTab}
-              className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-parchment-100 bg-gradient-to-r from-olive-seal to-[#3d4c18] hover:from-[#3d4c18] hover:to-olive-seal border border-brass/60 shadow-wax hover:shadow-parchment transition-all cursor-pointer animate-pulse"
-            >
-              <span>Tüm Pinler Tamamlandı • Diplomasi Zincirine İlerle</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          )}
+          </div>
         </div>
       </div>
     </div>

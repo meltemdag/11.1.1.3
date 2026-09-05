@@ -46,4 +46,4 @@ export interface TreatyProgress {
   };
 }
 
-export type ActiveTab = 'harita' | 'etkinlik' | 'nedensellik' | 'karsilastirma';
+export type ActiveTab = 'harita' | 'nedensellik' | 'karsilastirma';

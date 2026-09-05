@@ -57,12 +57,6 @@ export const Header: React.FC<HeaderProps> = ({
             <span>Diplomasi Haritası</span>
           </button>
 
-          <button
-            onClick={() => setActiveTab('etkinlik')}
-            className={tabClass(activeTab === 'etkinlik')}
-          >
-            <span>Neden - Sonuç</span>
-          </button>
 
           <button
             onClick={() => setActiveTab('nedensellik')}

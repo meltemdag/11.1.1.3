@@ -9,7 +9,7 @@ import { TreatyComparison } from './components/TreatyComparison';
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>('harita');
-  const [currentTreatyId, setCurrentTreatyId] = useState<TreatyId>('karlofca');
+  const [modalTreatyId, setModalTreatyId] = useState<TreatyId | null>(null);
 
   // İlerleme durumunu sıfırdan başlatan yardımcı fonksiyon
   const createInitialProgress = (): TreatyProgress => {
@@ -56,13 +56,12 @@ export const App: React.FC = () => {
 
   const handleReset = () => {
     setProgress(createInitialProgress());
-    setCurrentTreatyId('karlofca');
+    setModalTreatyId(null);
     setActiveTab('harita');
   };
 
   const handleSelectTreatyFromMap = (id: TreatyId) => {
-    setCurrentTreatyId(id);
-    setActiveTab('etkinlik');
+    setModalTreatyId(id);
   };
 
   const completedCount = TREATIES.filter(t => progress[t.id]?.completed).length;
@@ -84,21 +83,10 @@ export const App: React.FC = () => {
             />
           )}
 
-          {activeTab === 'etkinlik' && (
-            <TreatyCardActivity
-              currentTreatyId={currentTreatyId}
-              onSelectTreaty={(id) => setCurrentTreatyId(id)}
-              progress={progress}
-              onUpdateProgress={handleUpdateProgress}
-              onGoToNextTab={() => setActiveTab('nedensellik')}
-              onGoToPrevTab={() => setActiveTab('harita')}
-            />
-          )}
-
           {activeTab === 'nedensellik' && (
             <CausalityChain
               onGoToSummary={() => setActiveTab('karsilastirma')}
-              onGoToPrevTab={() => setActiveTab('etkinlik')}
+              onGoToPrevTab={() => setActiveTab('harita')}
             />
           )}
 
@@ -110,6 +98,21 @@ export const App: React.FC = () => {
             />
           )}
         </main>
+
+        {/* Neden - Sonuç Modal Pop-up */}
+        {modalTreatyId && (
+          <TreatyCardActivity
+            currentTreatyId={modalTreatyId}
+            progress={progress}
+            onUpdateProgress={handleUpdateProgress}
+            onClose={() => setModalTreatyId(null)}
+            onGoToPrevTab={() => setModalTreatyId(null)}
+            onGoToNextTab={() => {
+              setModalTreatyId(null);
+              setActiveTab('nedensellik');
+            }}
+          />
+        )}
       </div>
     </div>
   );
