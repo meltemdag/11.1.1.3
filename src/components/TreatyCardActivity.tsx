@@ -166,8 +166,7 @@ export const TreatyCardActivity: React.FC<TreatyCardActivityProps> = ({
     boardTitle: string,
     dotColor: string,
     placed: string[],
-    dropTarget: 'cause' | 'effect',
-    placeholder: string
+    dropTarget: 'cause' | 'effect'
   ) => (
     <div
       onDrop={(e) => handleDrop(e, dropTarget)}
@@ -178,7 +177,7 @@ export const TreatyCardActivity: React.FC<TreatyCardActivityProps> = ({
           if (item) handlePlaceItem(item, dropTarget);
         }
       }}
-      className={`rounded-xl border-2 p-4 transition-all min-h-[16rem] flex flex-col justify-between ${boardHighlight}`}
+      className={`rounded-xl border-2 p-4 transition-all min-h-[16rem] flex flex-col justify-start ${boardHighlight}`}
     >
       <div>
         <div className="flex items-center justify-between pb-3 border-b border-parchment-500/50 mb-3">
@@ -207,12 +206,6 @@ export const TreatyCardActivity: React.FC<TreatyCardActivityProps> = ({
           </div>
         )}
       </div>
-
-      {selectedCardId && (
-        <div className="mt-3 pt-2 border-t border-brass/40 text-center text-xs font-semibold text-seal-dark animate-pulse">
-          {placeholder}
-        </div>
-      )}
     </div>
   );
 
@@ -301,8 +294,7 @@ export const TreatyCardActivity: React.FC<TreatyCardActivityProps> = ({
               boardTitles.causes,
               'bg-brass',
               placedCauses,
-              'cause',
-              'Seçili maddeyi buraya "Neden" olarak yerleştirmek için tıklayınız'
+              'cause'
             )}
 
             {/* 2. Sonuçlar Panosu */}
@@ -310,8 +302,7 @@ export const TreatyCardActivity: React.FC<TreatyCardActivityProps> = ({
               boardTitles.effects,
               'bg-seal',
               placedEffects,
-              'effect',
-              'Seçili maddeyi buraya "Sonuç" olarak yerleştirmek için tıklayınız'
+              'effect'
             )}
           </div>
 
