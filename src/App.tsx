@@ -29,6 +29,8 @@ export const App: React.FC = () => {
 
   // İlerleme yalnızca oturum/sayfa bazlıdır (localStorage kullanılmaz)
   const [progress, setProgress] = useState<TreatyProgress>(createInitialProgress);
+  // Diplomasi zincirinin tamamlanma durumu (3. sekme kilidi için)
+  const [isChainCompleted, setIsChainCompleted] = useState<boolean>(false);
 
   // Önceki yerel depolama verilerini temizleme ve SCORM başlatma
   useEffect(() => {
@@ -79,14 +81,27 @@ export const App: React.FC = () => {
     }));
   };
 
+  const completedCount = TREATIES.filter(t => progress[t.id]?.completed).length;
+  const isMapCompleted = completedCount === TREATIES.length;
+
+  const handleSetActiveTab = (tab: ActiveTab) => {
+    // 2. sekme (Diplomasi Zinciri) için tüm pinlerin gezilip tamamlanmış olması şartı
+    if (tab === 'nedensellik' && !isMapCompleted) return;
+    // 3. sekme (Karşılaştırmalı Analiz) için zincir etkinliğinin tamamlanmış olması şartı
+    if (tab === 'karsilastirma' && (!isMapCompleted || !isChainCompleted)) return;
+    setActiveTab(tab);
+  };
+
   const handleReset = () => {
     setProgress(createInitialProgress());
+    setIsChainCompleted(false);
     setModalTreatyId(null);
     setActiveTab('harita');
   };
 
   const handleRestartToHome = () => {
     setProgress(createInitialProgress());
+    setIsChainCompleted(false);
     setModalTreatyId(null);
     setActiveTab('harita');
     setIsStarted(false);
@@ -96,8 +111,6 @@ export const App: React.FC = () => {
     setModalTreatyId(id);
   };
 
-  const completedCount = TREATIES.filter(t => progress[t.id]?.completed).length;
-
   return (
     <div className="min-h-screen flex flex-col justify-between">
       {!isStarted ? (
@@ -106,22 +119,33 @@ export const App: React.FC = () => {
         <div>
           <Header
             activeTab={activeTab}
-            setActiveTab={setActiveTab}
+            setActiveTab={handleSetActiveTab}
             completedCount={completedCount}
+            isMapCompleted={isMapCompleted}
+            isChainCompleted={isChainCompleted}
           />
           <main className="max-w-[1560px] mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-5">
             {activeTab === 'harita' && (
               <MapExplorer
                 progress={progress}
                 onSelectTreaty={handleSelectTreatyFromMap}
-                onGoToChain={() => setActiveTab('nedensellik')}
+                onGoToChain={() => {
+                  if (isMapCompleted) {
+                    setActiveTab('nedensellik');
+                  }
+                }}
               />
             )}
 
             {activeTab === 'nedensellik' && (
               <CausalityChain
-                onGoToSummary={() => setActiveTab('karsilastirma')}
+                onGoToSummary={() => {
+                  if (isChainCompleted) {
+                    setActiveTab('karsilastirma');
+                  }
+                }}
                 onGoToPrevTab={() => setActiveTab('harita')}
+                onComplete={(completed) => setIsChainCompleted(completed)}
               />
             )}
 

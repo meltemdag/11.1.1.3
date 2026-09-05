@@ -1,23 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import { ActiveTab } from '../types';
-import { Maximize2, Minimize2 } from 'lucide-react';
+import { Maximize2, Minimize2, Lock } from 'lucide-react';
 
 interface HeaderProps {
   activeTab: ActiveTab;
   setActiveTab: (tab: ActiveTab) => void;
   completedCount?: number;
+  isMapCompleted?: boolean;
+  isChainCompleted?: boolean;
 }
 
 const tabClass = (active: boolean) =>
-  `px-3.5 py-2 text-xs sm:text-sm font-medium rounded-md whitespace-nowrap transition-colors cursor-pointer border ${
+  `px-3.5 py-2 text-xs sm:text-sm font-medium rounded-md whitespace-nowrap transition-colors cursor-pointer border flex items-center gap-1.5 ${
     active
       ? 'bg-gradient-to-b from-seal-light to-seal text-parchment-100 border-brass/60 shadow-wax'
       : 'text-brass-pale/90 border-transparent hover:text-parchment-100 hover:bg-brass/15 hover:border-brass/30'
   }`;
 
+const lockedTabClass =
+  'px-3.5 py-2 text-xs sm:text-sm font-medium rounded-md whitespace-nowrap transition-colors border border-brass/20 text-brass-pale/45 bg-black/25 cursor-not-allowed flex items-center gap-1.5 select-none opacity-60';
+
 export const Header: React.FC<HeaderProps> = ({
   activeTab,
-  setActiveTab
+  setActiveTab,
+  isMapCompleted = false,
+  isChainCompleted = false
 }) => {
   const [isFullscreen, setIsFullscreen] = useState<boolean>(
     () => typeof document !== 'undefined' && !!document.fullscreenElement
@@ -57,18 +64,23 @@ export const Header: React.FC<HeaderProps> = ({
             <span>Diplomasi Haritası</span>
           </button>
 
-
           <button
-            onClick={() => setActiveTab('nedensellik')}
-            className={tabClass(activeTab === 'nedensellik')}
+            onClick={() => isMapCompleted && setActiveTab('nedensellik')}
+            disabled={!isMapCompleted}
+            title={!isMapCompleted ? 'Önce haritadaki tüm antlaşmaların neden ve sonuçlarını tamamlayınız.' : undefined}
+            className={!isMapCompleted ? lockedTabClass : tabClass(activeTab === 'nedensellik')}
           >
+            {!isMapCompleted && <Lock className="w-3.5 h-3.5 text-brass/60 shrink-0" />}
             <span>Diplomasi Zinciri</span>
           </button>
 
           <button
-            onClick={() => setActiveTab('karsilastirma')}
-            className={tabClass(activeTab === 'karsilastirma')}
+            onClick={() => isChainCompleted && setActiveTab('karsilastirma')}
+            disabled={!isChainCompleted}
+            title={!isChainCompleted ? 'Önce Diplomasi Zinciri etkinliğini tamamlayınız.' : undefined}
+            className={!isChainCompleted ? lockedTabClass : tabClass(activeTab === 'karsilastirma')}
           >
+            {!isChainCompleted && <Lock className="w-3.5 h-3.5 text-brass/60 shrink-0" />}
             <span>Karşılaştırmalı Analiz</span>
           </button>
         </div>

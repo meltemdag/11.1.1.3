@@ -12,6 +12,7 @@ import confetti from 'canvas-confetti';
 interface CausalityChainProps {
   onGoToSummary?: () => void;
   onGoToPrevTab?: () => void;
+  onComplete?: (completed: boolean) => void;
 }
 
 interface ChainItem {
@@ -101,7 +102,7 @@ function shuffleArray<T>(array: T[]): T[] {
   return arr;
 }
 
-export const CausalityChain: React.FC<CausalityChainProps> = ({ onGoToSummary }) => {
+export const CausalityChain: React.FC<CausalityChainProps> = ({ onGoToSummary, onComplete }) => {
   const [placed, setPlaced] = useState<{ [slotKey: string]: string }>({});
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState<boolean>(false);
@@ -138,6 +139,7 @@ export const CausalityChain: React.FC<CausalityChainProps> = ({ onGoToSummary })
       setLastFeedback({ type: 'correct', message: 'Doğru eşleştirme.' });
 
       if (Object.keys(updated).length === CHAIN_ITEMS.length) {
+        onComplete?.(true);
         confetti({
           particleCount: 100,
           spread: 85,
@@ -158,6 +160,7 @@ export const CausalityChain: React.FC<CausalityChainProps> = ({ onGoToSummary })
     setSelectedItemId(null);
     setLastFeedback({ type: null, message: '' });
     setShuffledChainIds(shuffleArray(CHAIN_ITEMS.map(i => i.id)));
+    onComplete?.(false);
   };
 
   // Drag & drop
