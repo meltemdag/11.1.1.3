@@ -240,9 +240,6 @@ export const MapExplorer: React.FC<MapExplorerProps> = ({ progress, onSelectTrea
                   <div className="font-antique font-bold text-parchment-50 group-hover:text-brass-pale transition-colors">
                     {getTreatyQuestion(selectedTreaty.id)}
                   </div>
-                  <div className="text-[11px] text-parchment-300/80 font-normal">
-                    Neden ve sonuçları tasnif et
-                  </div>
                 </div>
                 <div className="w-7 h-7 rounded-lg bg-parchment-100/10 group-hover:bg-brass group-hover:text-ink flex items-center justify-center transition-all shrink-0">
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />

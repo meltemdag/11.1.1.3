@@ -121,8 +121,8 @@ export const TreatyCardActivity: React.FC<TreatyCardActivityProps> = ({
       setLastFeedback({
         type: 'wrong',
         message: target === 'cause'
-          ? 'İpucu: Bu gelişmenin antlaşmadan önce süreci hazırlayan bir etken mi, yoksa antlaşmanın ardından ortaya çıkan bir durum mu olduğunu değerlendiriniz.'
-          : 'İpucu: Bu gelişmenin antlaşmanın ardından ortaya çıkan bir durum mu, yoksa antlaşmaya zemin hazırlayan bir etken mi olduğunu değerlendiriniz.'
+          ? 'Bu gelişmenin antlaşmadan önce süreci hazırlayan bir etken mi, yoksa antlaşmanın ardından ortaya çıkan bir durum mu olduğunu değerlendiriniz.'
+          : 'Bu gelişmenin antlaşmanın ardından ortaya çıkan bir durum mu, yoksa antlaşmaya zemin hazırlayan bir etken mi olduğunu değerlendiriniz.'
       });
     }
   };
@@ -336,19 +336,8 @@ export const TreatyCardActivity: React.FC<TreatyCardActivityProps> = ({
         </div>
 
         {/* Modal Alt Çubuğu */}
-        <div className="parchment-deep px-5 sm:px-6 py-3.5 border-t border-parchment-400/70 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
-          <div className="text-xs text-ink-soft">
-            {isCurrentTreatyCompleted ? (
-              <span className="flex items-center gap-1.5 font-bold text-olive-seal">
-                <CheckCircle2 className="w-4 h-4" />
-                Bu antlaşmanın tüm maddeleri başarıyla yerleştirildi.
-              </span>
-            ) : (
-              <span>Kalan madde: {unplacedItems.length}</span>
-            )}
-          </div>
-
-          <div className="flex gap-3">
+        <div className="parchment-deep px-5 sm:px-6 py-3.5 border-t border-parchment-400/70 flex items-center justify-end gap-3 shrink-0">
+          <div className="flex items-center gap-3">
             {allCompleted && onGoToNextTab && (
               <button
                 onClick={onGoToNextTab}
