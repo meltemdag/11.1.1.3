@@ -18,37 +18,37 @@ export const TREATIES: Treaty[] = [
     items: [
       {
         id: 'k-c1',
-        text: 'II. Viyana Kuşatması sonrası kurulan Kutsal İttifak\'a karşı 16 yıl süren çok cepheli savaşlar',
+        text: 'II. Viyana Kuşatması sonrası kurulan Kutsal İttifak\'a karşı 16 yıl boyunca çok cepheli savaşlar yürütüldü.',
         type: 'cause',
-        explanation: 'Doğru değerlendirme. Kutsal İttifak ile yapılan uzun savaşlar ve ordunun yıpranması antlaşmaya zemin hazırlamıştır.'
+        explanation: 'Doğru değerlendirme. Kutsal İttifak ile yapılan uzun savaşlar ve ordunun yıpranması barış sürecine zemin hazırlamıştır.'
       },
       {
         id: 'k-c2',
-        text: '1697 Zenta Muharebesi\'nde Osmanlı ordusunun ağır bir mağlubiyete uğraması',
+        text: '1697 Zenta Muharebesi\'nde Osmanlı ordusu müttefik kuvvetler karşısında ağır bir mağlubiyete uğradı.',
         type: 'cause',
         explanation: 'Doğru değerlendirme. Zenta yenilgisi sonrası askeri imkânlar tükenmiş ve barış masasına oturulmuştur.'
       },
       {
         id: 'k-c3',
-        text: 'Savaşların uzamasıyla maliyenin zorlanması ve İngiltere ile Hollanda\'nın arabuluculuğunun kabul edilmesi',
+        text: 'Yıllar süren seferlerin hazineyi tüketmesi üzerine İngiltere ve Hollanda\'nın arabuluculuğu kabul edildi.',
         type: 'cause',
-        explanation: 'Doğru değerlendirme. Çok cepheli yıpratıcı savaşlar ve lojistik güçlükler barış teklifini kabul ettirmiştir.'
+        explanation: 'Doğru değerlendirme. Çok cepheli yıpratıcı savaşlar ve mali güçlükler barış teklifini kabul ettirmiştir.'
       },
       {
         id: 'k-e1',
-        text: 'Batıda ilk kez Macaristan, Erdel, Podolya, Ukrayna ve Mora gibi geniş topraklar kaybedildi.',
+        text: 'Batıda ilk kez Macaristan, Erdel, Podolya, Ukrayna ve Mora gibi geniş topraklar düşman devletlere bırakıldı.',
         type: 'effect',
-        explanation: 'Doğru değerlendirme. Orta ve Doğu Avrupa’daki devasa coğrafyalar müttefik devletlere bırakılmıştır.'
+        explanation: 'Doğru değerlendirme. Orta ve Doğu Avrupa’daki devasa coğrafyalar müttefik devletlere devredilmiştir.'
       },
       {
         id: 'k-e2',
-        text: 'Orta Avrupa üstünlüğü sona erdi ve mevcut sınırları koruma amaçlı savunma politikasına geçildi.',
+        text: 'Orta Avrupa\'daki siyasi üstünlük kaybedildi ve mevcut sınırları koruma amaçlı savunma anlayışına geçildi.',
         type: 'effect',
         explanation: 'Doğru değerlendirme. Karlofça, Osmanlı dış politikasında taarruz devrini kapatıp savunma dönemini başlatmıştır.'
       },
       {
         id: 'k-e3',
-        text: 'Barışın garantörlüğü ilk kez karşı devlete (Avusturya) bırakıldı.',
+        text: 'Antlaşmanın garantörlüğü 25 yıllık süre için ilk kez Avusturya Devleti\'ne verildi.',
         type: 'effect',
         explanation: 'Doğru değerlendirme. Osmanlı Devleti ilk kez bir antlaşmanın garantörlüğünü başka bir devlete devretmiştir.'
       }
@@ -71,37 +71,37 @@ export const TREATIES: Treaty[] = [
     items: [
       {
         id: 'p-c1',
-        text: 'Karlofça ve İstanbul antlaşmalarıyla kaybedilen toprakları (özellikle Azak Kalesi\'ni) geri alma arzusu',
+        text: 'Karlofça ile kaybedilen yerleri ve Karadeniz güvenliği için hayati olan Azak Kalesi\'ni geri alma kararı alındı.',
         type: 'cause',
-        explanation: 'Doğru değerlendirme. Kaybedilen stratejik kaleleri geri alma arzusu Prut seferine yol açmıştır.'
+        explanation: 'Doğru değerlendirme. Kaybedilen stratejik kaleleri geri alma arzusu Prut seferini başlatmıştır.'
       },
       {
         id: 'p-c2',
-        text: 'Rus birliklerinin İsveç Kralı\'nı takip bahanesiyle Osmanlı sınırlarını ihlal etmesi',
+        text: 'Rus birlikleri İsveç Kralı\'nı takip etme gerekçesiyle Osmanlı topraklarına girerek sınır ihlali yaptı.',
         type: 'cause',
-        explanation: 'Doğru değerlendirme. Rus birliklerinin sınır ihlalleri savaşı başlatan doğrudan neden olmuştur.'
+        explanation: 'Doğru değerlendirme. Rus birliklerinin sınır ihlalleri savaşı başlatan doğrudan gelişme olmuştur.'
       },
       {
         id: 'p-c3',
-        text: 'Poltava yenilgisi sonrası İsveç Kralı XII. Şarl\'ın (Demirbaş Şarl) Osmanlı\'ya sığınması',
+        text: 'Poltava Muharebesi\'nde Rusya\'ya mağlup olan İsveç Kralı XII. Şarl Osmanlı Devleti\'ne sığındı.',
         type: 'cause',
-        explanation: 'Doğru değerlendirme. İsveç Kralı\'nın Bender\'e sığınması Osmanlı-Rus diplomatik krizini tetiklemiştir.'
+        explanation: 'Doğru değerlendirme. İsveç Kralı\'nın Bender\'e sığınması Osmanlı-Rus diplomatik krizini tırmandırmıştır.'
       },
       {
         id: 'p-e1',
-        text: 'Stratejik Azak Kalesi ve çevresi yeniden Osmanlı yönetimine geçti.',
+        text: 'Stratejik öneme sahip Azak Kalesi ve çevresi yeniden Osmanlı idaresine geçti.',
         type: 'effect',
         explanation: 'Doğru değerlendirme. Karadeniz’in kuzey güvenliği yeniden sağlanmış ve Rusya Karadeniz\'den uzaklaştırılmıştır.'
       },
       {
         id: 'p-e2',
-        text: 'Rusya\'nın İstanbul\'da elçi bulundurma hakkı kaldırıldı; kayıpları geri alma umudu güçlendi.',
+        text: 'Rusya\'nın İstanbul\'daki daimi elçiliği kapatıldı ve kaybedilen toprakları geri alma inancı güçlendi.',
         type: 'effect',
         explanation: 'Doğru değerlendirme. Antlaşma, kaybedilen toprakların geri alınabileceğine dair güçlü bir moral kazandırmıştır.'
       },
       {
         id: 'p-e3',
-        text: 'Prut\'ta kuşatılan Rusya barış istedi; Karadeniz güvenliği geçici olarak sağlandı.',
+        text: 'Prut Nehri kıyısında kuşatılan Rus ordusunun barış teklifiyle Karadeniz kıyılarında güvenlik sağlandı.',
         type: 'effect',
         explanation: 'Doğru değerlendirme. Kuşatma neticesinde Rusya geri adım atmış ve diplomatik taahhütlerde bulunmuştur.'
       }
@@ -124,37 +124,37 @@ export const TREATIES: Treaty[] = [
     items: [
       {
         id: 'ps-c1',
-        text: 'Mora\'nın Venedik\'ten geri alınması üzerine Avusturya\'nın garantör sıfatıyla savaşa dahil olması',
+        text: 'Mora\'nın Venedik\'ten geri alınması üzerine Avusturya garantörlük sıfatını öne sürerek savaşa dahil oldu.',
         type: 'cause',
         explanation: 'Doğru değerlendirme. Mora\'daki başarı Avusturya’yı harekete geçirmiş ve savaşı iki cepheli hale getirmiştir.'
       },
       {
         id: 'ps-c2',
-        text: '1716 Petervaradin yenilgisi, Sadrazamın şehit düşmesi ve Belgrad\'ın elden çıkması',
+        text: 'Petervaradin Muharebesi\'nde ordu mağlup oldu ve Tuna savunmasının kilidi Belgrad Kalesi elden çıktı.',
         type: 'cause',
         explanation: 'Doğru değerlendirme. Alınan ağır darbeler ve Tuna’nın ana kilidi Belgrad’ın düşmesi barışa zorlamıştır.'
       },
       {
         id: 'ps-c3',
-        text: 'Venedik baskısındaki Mora Ortodokslarının Osmanlı Devleti\'nden yardım istemesi',
+        text: 'Venedik idaresinin baskısından bunalan Mora halkı Osmanlı Devleti\'nden askeri yardım talep etti.',
         type: 'cause',
         explanation: 'Doğru değerlendirme. Bölge halkının talepleri ve stratejik hedefler Mora Seferi\'ni başlatmıştır.'
       },
       {
         id: 'ps-e1',
-        text: 'Belgrad, Temeşvar ve Banat Avusturya\'ya bırakıldı; Mora Osmanlı\'da kaldı.',
+        text: 'Belgrad, Temeşvar ve Banat yaylası Avusturya\'ya devredildi; Mora Yarımadası Osmanlı\'da kaldı.',
         type: 'effect',
         explanation: 'Doğru değerlendirme. Mora kurtarılmış ancak Orta Avrupa’nın kapısı Belgrad yitirilmiştir.'
       },
       {
         id: 'ps-e2',
-        text: 'Batıdaki kayıpları geri alma umudu terk edildi ve barış odaklı Lale Devri başladı.',
+        text: 'Batıdaki toprak kayıplarını telafi etme siyaseti terk edildi ve barış odaklı Lale Devri başladı.',
         type: 'effect',
         explanation: 'Doğru değerlendirme. Avrupa ile barışçıl diplomasiye geçilmiş ve Lale Devri süreci başlamıştır.'
       },
       {
         id: 'ps-e3',
-        text: 'Avrupa\'nın askeri üstünlüğü kabul edilerek Batı tarzı ıslahatlara ve diplomasiye yönelindi.',
+        text: 'Avrupa\'nın askeri üstünlüğü kabul edilerek Batı tarzı ıslahat hareketlerine ve diplomasiye yönelindi.',
         type: 'effect',
         explanation: 'Doğru değerlendirme. Osmanlı Devleti Avrupa diplomasisini ve teknik gelişmelerini yakından izlemeye başlamıştır.'
       }
@@ -177,37 +177,37 @@ export const TREATIES: Treaty[] = [
     items: [
       {
         id: 'b-c1',
-        text: 'Pasarofça ile kaybedilen stratejik Belgrad\'ı ve Tuna savunma hattını geri alma kararlılığı',
+        text: 'Osmanlı yönetimi, Pasarofça ile yitirilen stratejik Belgrad\'ı ve Tuna savunma hattını geri almayı kararlaştırdı.',
         type: 'cause',
         explanation: 'Doğru değerlendirme. Belgrad’ın kaybı Balkanlar ve İstanbul için büyük bir stratejik tehlike oluşturuyordu.'
       },
       {
         id: 'b-c2',
-        text: 'Avusturya ve Rusya\'nın gizli ittifak kurarak Osmanlı topraklarına eş zamanlı saldırması',
+        text: 'Avusturya ve Rusya gizli ittifak protokolü imzalayarak Osmanlı sınırlarına iki ayrı cepheden saldırdı.',
         type: 'cause',
         explanation: 'Doğru değerlendirme. İki müttefik devletin eş zamanlı saldırıları Osmanlıyı topyekûn savunmaya yöneltmiştir.'
       },
       {
         id: 'b-c3',
-        text: 'Humbaracı Ahmed Paşa öncülüğündeki askeri ve topçu ıslahatlarıyla ordunun güçlenmesi',
+        text: 'Humbaracı Ahmed Paşa öncülüğünde yapılan askeri yeniliklerle topçu ve humbaracı ocakları güçlendirildi.',
         type: 'cause',
         explanation: 'Doğru değerlendirme. Askeri teşkilatta ve topçu sınıfında yapılan yenilikler iki cephede zafer kazandırmıştır.'
       },
       {
         id: 'b-e1',
-        text: 'Belgrad ve Semendire geri alınarak Tuna savunma hattı yeniden kuruldu.',
+        text: 'Belgrad ve Semendire kaleleri yeniden fethedilerek Tuna savunma hattı baştan kuruldu.',
         type: 'effect',
         explanation: 'Doğru değerlendirme. Ordu iki cephede birden başarı kazanmış ve kaybedilen kaleleri kurtarmıştır.'
       },
       {
         id: 'b-e2',
-        text: 'Rusya Karadeniz\'de gemi bulundurmama şartını kabul etti; Avusturya ile 50 yıllık barış sağlandı.',
+        text: 'Rusya\'nın Karadeniz\'de gemi bulundurması yasaklandı ve Avusturya ile uzun vadeli barış sağlandı.',
         type: 'effect',
         explanation: 'Doğru değerlendirme. Karadeniz’in güvenliği korunmuş ve uzun süreli diplomatik istikrar sağlanmıştır.'
       },
       {
         id: 'b-e3',
-        text: '18. yüzyılın son kazançlı antlaşması imzalandı; Fransız kapitülasyonları sürekli hale getirildi.',
+        text: 'Fransa\'nın barış sürecindeki arabuluculuğuna karşılık verilen ticari kapitülasyonlar daimi kılındı.',
         type: 'effect',
         explanation: 'Doğru değerlendirme. Fransız arabuluculuğuna karşılık ticari ayrıcalıklar daimi hale getirilmiştir.'
       }
@@ -230,37 +230,37 @@ export const TREATIES: Treaty[] = [
     items: [
       {
         id: 'kk-c1',
-        text: 'Rusya\'nın Lehistan\'ın iç işlerine müdahale etmesi ve sınır ihlalleri yapması',
+        text: 'Rusya\'nın Lehistan\'a askeri müdahalede bulunması ve kaçan Lehleri takip bahanesiyle Osmanlı sınır karakolları ihlal edildi.',
         type: 'cause',
-        explanation: 'Doğru değerlendirme. Rus birliklerinin Leh yurtseverleri takibi ve sınır ihlalleri savaşı başlatan temel nedendir.'
+        explanation: 'Doğru değerlendirme. Rus birliklerinin sınır ihlalleri savaşı başlatan temel gelişme olmuştur.'
       },
       {
         id: 'kk-c2',
-        text: '1770 Çeşme Baskını\'nda donanmanın yakılması ve Kartal Sahrası yenilgisi',
+        text: '1770 Çeşme Limanı baskınında Osmanlı donanması yakıldı ve Kartal Sahrası\'nda büyük bir hezimet yaşandı.',
         type: 'cause',
         explanation: 'Doğru değerlendirme. Hem denizde hem karada yaşanan hezimetler Osmanlı direncini kırmıştır.'
       },
       {
         id: 'kk-c3',
-        text: 'Rus kara ordusunun Balkanlar\'a inmesi ve 1774 Kozluca Muharebesi yenilgisi',
+        text: 'Balkanlar\'a kadar inen Rus ordusu karşısında 1774 Kozluca Muharebesi kaybedildi.',
         type: 'cause',
         explanation: 'Doğru değerlendirme. Kozluca yenilgisi Osmanlıyı antlaşmayı ağır şartlarla kabule zorlamıştır.'
       },
       {
         id: 'kk-e1',
-        text: 'Kırım bağımsız oldu; halkı Müslüman bir toprak ilk kez kaybedilerek halifelik makamı kullanıldı.',
+        text: 'Kırım Hanlığı bağımsız kılındı; halkı Müslüman bir coğrafyayla kültürel bağı korumak için halifelik makamı kullanıldı.',
         type: 'effect',
         explanation: 'Doğru değerlendirme. Kırım siyasi olarak ayrılmış; dini-kültürel bağı korumak için halifelik maddesi eklenmiştir.'
       },
       {
         id: 'kk-e2',
-        text: 'Rus gemilerine Boğazlar\'dan geçiş hakkı verildi; Ortodoksları himaye bahanesiyle iç işlere müdahale yolu açıldı.',
+        text: 'Rus ticaret gemilerine Boğazlar\'dan serbest geçiş hakkı ve Ortodoks tebaayı himaye imtiyazı tanındı.',
         type: 'effect',
         explanation: 'Doğru değerlendirme. Rusya Boğazlar\'dan serbest geçiş ve konsolosluklar açarak iç siyasete müdahale gücü elde etti.'
       },
       {
         id: 'kk-e3',
-        text: 'Osmanlı Devleti ilk kez bir devlete (Rusya) savaş tazminatı ödemeyi ve kapitülasyon vermeyi kabul etti.',
+        text: 'Osmanlı Devleti savaş tarihinde ilk defa yabancı bir devlete savaş tazminatı ödemeyi kabul etti.',
         type: 'effect',
         explanation: 'Doğru değerlendirme. Ağır mali ve ticari yük getiren bu maddeler devleti ekonomik yönden yıpratmıştır.'
       }

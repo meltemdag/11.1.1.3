@@ -5,26 +5,23 @@ import {
   CheckCircle2, 
   XCircle, 
   RotateCcw, 
-  ArrowRight, 
   ArrowLeft
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 interface TreatyCardActivityProps {
   currentTreatyId: TreatyId;
-  onSelectTreaty: (id: TreatyId) => void;
+  onSelectTreaty?: (id: TreatyId) => void;
   progress: TreatyProgress;
   onUpdateProgress: (id: TreatyId, causes: string[], effects: string[], isCompleted: boolean) => void;
-  onGoToNextTab: () => void;
+  onGoToNextTab?: () => void;
   onGoToPrevTab?: () => void;
 }
 
 export const TreatyCardActivity: React.FC<TreatyCardActivityProps> = ({
   currentTreatyId,
-  onSelectTreaty,
   progress,
   onUpdateProgress,
-  onGoToNextTab,
   onGoToPrevTab
 }) => {
   const treaty = TREATIES.find(t => t.id === currentTreatyId) || TREATIES[0];
@@ -152,9 +149,7 @@ export const TreatyCardActivity: React.FC<TreatyCardActivityProps> = ({
     e.preventDefault();
   };
 
-  const currentIndex = TREATIES.findIndex(t => t.id === treaty.id);
-  const nextTreaty = TREATIES[currentIndex + 1];
-  const prevTreaty = TREATIES[currentIndex - 1];
+
 
   const getBoardTitles = (id: TreatyId) => {
     switch (id) {
@@ -394,52 +389,18 @@ export const TreatyCardActivity: React.FC<TreatyCardActivityProps> = ({
           )}
         </div>
 
-        {/* Alt Gezinme Butonları */}
-        <div className="bg-slate-50 px-5 sm:px-6 py-4 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3">
-          {onGoToPrevTab ? (
+        {/* Alt Gezinme: Haritaya Dön Butonu (Ortalanmış) */}
+        {onGoToPrevTab && (
+          <div className="bg-slate-50 px-5 sm:px-6 py-4 border-t border-slate-200 flex items-center justify-center">
             <button
               onClick={onGoToPrevTab}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold text-slate-700 bg-white border border-slate-300 hover:bg-slate-100 transition-colors shadow-2xs cursor-pointer"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-700 bg-white border border-slate-300 hover:bg-slate-100 hover:text-slate-900 transition-colors shadow-2xs cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>Haritaya Geri Dön</span>
+              <span>Haritaya Dön</span>
             </button>
-          ) : (
-            <div />
-          )}
-
-          <div className="flex items-center gap-2">
-            {prevTreaty && (
-              <button
-                onClick={() => onSelectTreaty(prevTreaty.id)}
-                className="flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-medium text-slate-700 bg-white border border-slate-200 hover:bg-slate-100 transition-colors shadow-2xs"
-              >
-                <ArrowLeft className="w-3.5 h-3.5" />
-                <span>Önceki: {prevTreaty.title.replace(' Antlaşması', '')}</span>
-              </button>
-            )}
-
-            {nextTreaty && (
-              <button
-                onClick={() => onSelectTreaty(nextTreaty.id)}
-                className="flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-semibold text-slate-800 bg-white border border-slate-300 hover:bg-slate-100 transition-colors shadow-2xs"
-              >
-                <span>Sonraki: {nextTreaty.title.replace(' Antlaşması', '')}</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            )}
-
-            {onGoToNextTab && (
-              <button
-                onClick={onGoToNextTab}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold bg-blue-900 hover:bg-blue-800 text-white transition-colors shadow-sm cursor-pointer ml-1"
-              >
-                <span>Nedensellik Zincirine İlerle</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            )}
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

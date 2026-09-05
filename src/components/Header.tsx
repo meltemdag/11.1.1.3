@@ -1,5 +1,4 @@
 import React from 'react';
-import { Compass, BookOpen, GitBranch, Columns3 } from 'lucide-react';
 import { ActiveTab } from '../types';
 
 interface HeaderProps {
@@ -20,28 +19,26 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="flex overflow-x-auto space-x-1 sm:space-x-2">
           <button
             onClick={() => setActiveTab('harita')}
-            className={`flex items-center gap-2 px-3.5 py-2 text-xs sm:text-sm font-medium rounded-md whitespace-nowrap transition-colors ${
+            className={`px-3.5 py-2 text-xs sm:text-sm font-medium rounded-md whitespace-nowrap transition-colors cursor-pointer ${
               activeTab === 'harita'
                 ? 'bg-blue-900 text-white shadow-sm'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
             }`}
           >
-            <Compass className="w-4 h-4" />
             <span>Strateji Haritası</span>
           </button>
 
           <button
             onClick={() => setActiveTab('etkinlik')}
-            className={`flex items-center gap-2 px-3.5 py-2 text-xs sm:text-sm font-medium rounded-md whitespace-nowrap transition-colors ${
+            className={`flex items-center px-3.5 py-2 text-xs sm:text-sm font-medium rounded-md whitespace-nowrap transition-colors cursor-pointer ${
               activeTab === 'etkinlik'
                 ? 'bg-blue-900 text-white shadow-sm'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
             }`}
           >
-            <BookOpen className="w-4 h-4" />
-            <span>Olay Bilgi Kartları & Tasnif</span>
+            <span>Neden - Sonuç</span>
             {completedCount > 0 && (
-              <span className="ml-1 px-1.5 py-0.2 bg-blue-800 text-blue-100 rounded text-xs">
+              <span className="ml-1.5 px-1.5 py-0.2 bg-blue-800 text-blue-100 rounded text-xs">
                 {completedCount}
               </span>
             )}
@@ -49,25 +46,23 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => setActiveTab('nedensellik')}
-            className={`flex items-center gap-2 px-3.5 py-2 text-xs sm:text-sm font-medium rounded-md whitespace-nowrap transition-colors ${
+            className={`px-3.5 py-2 text-xs sm:text-sm font-medium rounded-md whitespace-nowrap transition-colors cursor-pointer ${
               activeTab === 'nedensellik'
                 ? 'bg-blue-900 text-white shadow-sm'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
             }`}
           >
-            <GitBranch className="w-4 h-4" />
-            <span>Nedensellik Zinciri</span>
+            <span>Antlaşma Kronolojisi</span>
           </button>
 
           <button
             onClick={() => setActiveTab('karsilastirma')}
-            className={`flex items-center gap-2 px-3.5 py-2 text-xs sm:text-sm font-medium rounded-md whitespace-nowrap transition-colors ${
+            className={`px-3.5 py-2 text-xs sm:text-sm font-medium rounded-md whitespace-nowrap transition-colors cursor-pointer ${
               activeTab === 'karsilastirma'
                 ? 'bg-blue-900 text-white shadow-sm'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
             }`}
           >
-            <Columns3 className="w-4 h-4" />
             <span>Karşılaştırmalı Analiz</span>
           </button>
         </div>

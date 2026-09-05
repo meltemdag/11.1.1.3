@@ -4,14 +4,12 @@ import {
   CheckCircle2, 
   XCircle, 
   RotateCcw, 
-  ArrowRight, 
-  ArrowLeft,
   Link2
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 interface CausalityChainProps {
-  onGoToSummary: () => void;
+  onGoToSummary?: () => void;
   onGoToPrevTab?: () => void;
 }
 
@@ -19,37 +17,37 @@ interface ChainLinkItem {
   id: string;
   targetSlotIndex: number;
   text: string;
-  explanation: string;
+  hint: string;
 }
 
 const CHAIN_LINKS: ChainLinkItem[] = [
   {
     id: 'link_1',
     targetSlotIndex: 0,
-    text: "Batıda yaşanan ağır toprak kayıplarını telafi etme arzusu ve Karadeniz güvenliği için Azak Kalesi'nin hedeflenmesi",
-    explanation: "Batıdaki ilk büyük toprak kayıpları sonrası ortaya çıkan telafi politikası, Karadeniz güvenliğini sağlama seferine yol açmıştır."
+    text: "Azak Kalesi'ni kaybeden devlet Karadeniz'i korumak için sefere çıktı; zaferle kale geri alınarak Karadeniz'in güvenliği yeniden sağlandı.",
+    hint: "İpucu: Kaybedilen toprakları geri alma ümidinin doğduğu süreci düşününüz."
   },
   {
     id: 'link_2',
     targetSlotIndex: 1,
-    text: "Kuzeyde kazanılan başarının verdiği cesaretle Mora'nın geri alınması ve Avusturya'nın savaşa dahil olması",
-    explanation: "Kuzey cephesindeki başarı diğer kayıpların da geri alınabileceği inancını artırmış; Mora Seferi Avusturya'nın savaşa girmesini tetiklemiştir."
+    text: "Kuzeydeki zaferin cesaretiyle kayıpları telafi savaşı başlatıldı; batıda yenilgi yaşansa da Karadeniz yabancı donanmalara kapalı tutuldu.",
+    hint: "İpucu: Lale Devri'nin başladığı süreci düşününüz."
   },
   {
     id: 'link_3',
     targetSlotIndex: 2,
-    text: "Tuna savunma hattının çökmesi üzerine yapılan askeri ıslahatlar ve kaybedilen stratejik kalenin geri alınması",
-    explanation: "Tuna boyundaki hayati kalenin kaybı üzerine başlatılan topçu ve askeri ıslahatlar, iki cepheli mücadelede zafere dönüşmüştür."
+    text: "Rusya'nın Karadeniz'e inme hamlesine karşı açılan savaş kazanıldı; Rus gemileri yasaklanarak Karadeniz'in Türk gölü statüsü son kez onaylandı.",
+    hint: "İpucu: XVIII. yüzyılda imzalanan son kazançlı antlaşmayı düşününüz."
   },
   {
     id: 'link_4',
     targetSlotIndex: 3,
-    text: "Yarım asır süren uzun barışın orduda rehavet yaratması ve Rusya'nın sıcak denizlere inmek için Lehistan'a müdahalesi",
-    explanation: "Uzun barış döneminin getirdiği askeri hazırlıksızlık, Rusya'nın güneye inme politikasıyla birleşerek ağır kayıplara yol açmıştır."
+    text: "Karadeniz yasağını kırmak isteyen Rusya ile yapılan savaş kaybedildi; Kırım'ın kaybı ve Rus donanmasıyla Türk gölü dönemi sona erdi.",
+    hint: "İpucu: Şartları en ağır olan antlaşmayı düşününüz."
   }
 ];
 
-export const CausalityChain: React.FC<CausalityChainProps> = ({ onGoToSummary, onGoToPrevTab }) => {
+export const CausalityChain: React.FC<CausalityChainProps> = () => {
   const [placedLinks, setPlacedLinks] = useState<{ [slotIndex: number]: string }>({});
   const [selectedLinkId, setSelectedLinkId] = useState<string | null>(null);
   const [lastFeedback, setLastFeedback] = useState<{
@@ -73,7 +71,7 @@ export const CausalityChain: React.FC<CausalityChainProps> = ({ onGoToSummary, o
       setSelectedLinkId(null);
       setLastFeedback({
         type: 'correct',
-        message: linkItem.explanation
+        message: 'Doğru eşleştirme!'
       });
 
       if (Object.keys(updated).length === CHAIN_LINKS.length) {
@@ -86,7 +84,7 @@ export const CausalityChain: React.FC<CausalityChainProps> = ({ onGoToSummary, o
     } else {
       setLastFeedback({
         type: 'wrong',
-        message: 'Bu bağlantı maddesi seçtiğiniz antlaşmalar arasındaki kronolojik ve nedensel süreci ifade etmemektedir. Olayların gelişimini inceleyiniz.'
+        message: linkItem.hint
       });
     }
   };
@@ -130,24 +128,24 @@ export const CausalityChain: React.FC<CausalityChainProps> = ({ onGoToSummary, o
     <div className="space-y-4">
       {/* Ana Kart */}
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        {/* Yönlendirme Şeridi */}
-        <div className="bg-slate-50 px-5 sm:px-6 py-3.5 border-b border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs sm:text-sm text-slate-700">
+        {/* Açıklama ve Sıfırlama Şeridi */}
+        <div className="bg-slate-50 px-5 sm:px-6 py-3 border-b border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs sm:text-sm text-slate-700">
           <div>
-            Aşağıdaki nedensellik maddelerini inceleyiniz; ardışık antlaşmalar arasındaki boş zincir halkalarına yerleştirerek zinciri tamamlayınız.
+            Aşağıdaki maddeleri inceleyiniz; antlaşmalar arasında Karadeniz'in statüsünün değişimini gösteren zincir halkalarını doğru sırayla yerleştiriniz.
           </div>
           <button
             onClick={handleReset}
-            className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-900 px-2 py-1 rounded hover:bg-slate-200 transition-colors shrink-0"
+            className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-900 px-2 py-1 rounded hover:bg-slate-200 transition-colors shrink-0 cursor-pointer"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>Zinciri Sıfırla</span>
           </button>
         </div>
 
-        {/* Üst Alan: Yatay Zincir Halkaları Rayı */}
-        <div className="p-5 sm:p-6 bg-slate-900/5 border-b border-slate-200">
-          <div className="overflow-x-auto pb-4 pt-2 scrollbar-thin">
-            <div className="min-w-[920px] flex items-center justify-between gap-2 px-2">
+        {/* Üst Alan: Yatay Zincir Halkaları Rayı (Tüm Ekran Genişliğini Dolduran Yapı) */}
+        <div className="py-4 px-2 sm:px-4 bg-slate-900/5 border-b border-slate-200">
+          <div className="overflow-x-auto pb-1 pt-1 scrollbar-thin">
+            <div className="w-full flex items-center justify-between min-w-[800px] lg:min-w-0 px-1 sm:px-2">
               {TREATIES.map((treaty, idx) => {
                 const isLast = idx === TREATIES.length - 1;
                 const slotIndex = idx;
@@ -158,21 +156,21 @@ export const CausalityChain: React.FC<CausalityChainProps> = ({ onGoToSummary, o
                   <React.Fragment key={treaty.id}>
                     {/* Antlaşma Yuvarlak Halkası */}
                     <div className="flex flex-col items-center shrink-0">
-                      <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-gradient-to-br from-slate-900 via-slate-800 to-blue-950 text-white flex flex-col items-center justify-center p-2.5 text-center border-4 border-amber-400 shadow-lg relative group transition-transform hover:scale-105">
-                        <span className="text-sm sm:text-base font-extrabold font-mono text-amber-300">
+                      <div className="w-12 h-12 sm:w-13 sm:h-13 lg:w-14 lg:h-14 rounded-full bg-gradient-to-br from-slate-900 via-slate-800 to-blue-950 text-white flex flex-col items-center justify-center p-0.5 text-center border-2 border-amber-400 shadow-sm relative group transition-transform hover:scale-105 shrink-0">
+                        <span className="text-[10.5px] sm:text-[11px] lg:text-xs font-black font-mono text-amber-300 leading-none">
                           {treaty.year}
                         </span>
-                        <span className="text-[11px] sm:text-xs font-bold text-white leading-tight line-clamp-2 mt-1">
+                        <span className="text-[8px] sm:text-[8.5px] lg:text-[9.5px] font-bold text-white leading-tight mt-0.5 px-0.5 text-center">
                           {treaty.title.replace(' Antlaşması', '')}
                         </span>
                       </div>
                     </div>
 
-                    {/* İki Antlaşma Arasındaki Bağlantı Halkası (Zincir Yuvası) */}
+                    {/* İki Antlaşma Arasındaki Bağlantı Alanı (Teması Kesinlikle Engelleyen Güvenli Ayrım) */}
                     {!isLast && (
-                      <div className="flex items-center shrink-0">
-                        {/* Sol Zincir Bağlantı Çubuğu */}
-                        <div className="w-3 sm:w-4 h-2 bg-gradient-to-r from-amber-400 to-slate-400 rounded-full" />
+                      <div className="flex-1 flex items-center justify-center min-w-0 px-1 sm:px-1.5 lg:px-2">
+                        {/* Sol Bağlantı Çubuğu (Garantili Boşluk) */}
+                        <div className="flex-1 min-w-[12px] sm:min-w-[16px] lg:min-w-[20px] h-0.5 sm:h-1 bg-gradient-to-r from-amber-400 to-amber-500 rounded-full shrink-0" />
 
                         {/* Yuvarlak Zincir Bağlantı Yuvası */}
                         <div
@@ -184,20 +182,21 @@ export const CausalityChain: React.FC<CausalityChainProps> = ({ onGoToSummary, o
                               if (item) handlePlaceLink(item, slotIndex);
                             }
                           }}
-                          className={`w-32 h-32 sm:w-36 sm:h-36 rounded-full flex flex-col items-center justify-center p-3 text-center transition-all relative shrink-0 ${
+                          className={`w-[125px] h-[125px] sm:w-[145px] sm:h-[145px] md:w-[170px] md:h-[170px] lg:w-[190px] lg:h-[190px] xl:w-[210px] xl:h-[210px] rounded-full flex flex-col items-center justify-center p-2 sm:p-2.5 lg:p-3 text-center transition-all relative shrink-0 mx-1 sm:mx-1.5 ${
                             placedLinkItem
-                              ? 'bg-emerald-100 border-4 border-emerald-500 text-emerald-950 shadow-md ring-2 ring-emerald-300'
+                              ? 'bg-emerald-50 border-2 sm:border-3 border-emerald-500 text-emerald-950 shadow-md ring-2 ring-emerald-300'
                               : selectedLinkId
-                              ? 'bg-blue-50 border-4 border-dashed border-blue-500 ring-4 ring-blue-300 cursor-pointer animate-pulse scale-105'
-                              : 'bg-amber-50/70 border-4 border-dashed border-amber-400/90 hover:border-amber-500 hover:bg-amber-100/70 cursor-pointer shadow-inner'
+                              ? 'bg-blue-50 border-2 sm:border-3 border-dashed border-blue-500 ring-4 ring-blue-300 cursor-pointer animate-pulse scale-102'
+                              : 'bg-amber-50/70 border-2 sm:border-3 border-dashed border-amber-400/90 hover:border-amber-500 hover:bg-amber-100/70 cursor-pointer shadow-inner'
                           }`}
+                          title={placedLinkItem ? placedLinkItem.text : undefined}
                         >
                           {placedLinkItem ? (
-                            <div className="flex flex-col items-center justify-center space-y-1">
-                              <div className="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center shadow-xs">
-                                <CheckCircle2 className="w-4 h-4" />
+                            <div className="flex flex-col items-center justify-center space-y-1 text-center px-2 py-0.5 w-full max-w-[94%]">
+                              <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center shadow-xs shrink-0">
+                                <CheckCircle2 className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                               </div>
-                              <p className="text-[10px] sm:text-[11px] font-bold text-emerald-950 leading-tight line-clamp-3">
+                              <p className="text-[11px] sm:text-[11.5px] md:text-xs lg:text-[12.5px] xl:text-[13px] font-semibold text-emerald-950 leading-snug">
                                 {placedLinkItem.text}
                               </p>
                               <button
@@ -205,25 +204,26 @@ export const CausalityChain: React.FC<CausalityChainProps> = ({ onGoToSummary, o
                                   e.stopPropagation();
                                   handleRemoveLink(slotIndex);
                                 }}
-                                className="text-[10px] text-emerald-700 hover:text-emerald-950 font-bold underline mt-0.5"
+                                className="text-[9.5px] sm:text-[10px] text-rose-700 hover:text-rose-900 font-bold underline hover:no-underline cursor-pointer pt-0.5 shrink-0"
+                                title="Bağlantıyı kaldır"
                               >
                                 Kaldır
                               </button>
                             </div>
                           ) : (
-                            <div className="flex flex-col items-center justify-center space-y-1">
-                              <div className="w-7 h-7 rounded-full bg-amber-200 text-amber-900 flex items-center justify-center border border-amber-300">
-                                <Link2 className="w-4 h-4" />
+                            <div className="flex flex-col items-center justify-center space-y-1 p-1 text-center">
+                              <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-amber-200 text-amber-900 flex items-center justify-center border border-amber-300 shadow-2xs">
+                                <Link2 className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                               </div>
-                              <span className="text-[10px] sm:text-[11px] font-semibold text-slate-700 leading-tight text-center px-1">
-                                {selectedLinkId ? 'Buraya Yerleştir' : 'Yerleştiriniz'}
+                              <span className="text-[11px] sm:text-xs font-semibold text-slate-700 leading-tight">
+                                {selectedLinkId ? 'Buraya Yerleştir' : 'Sürükle veya seç'}
                               </span>
                             </div>
                           )}
                         </div>
 
-                        {/* Sağ Zincir Bağlantı Çubuğu */}
-                        <div className="w-3 sm:w-4 h-2 bg-gradient-to-r from-slate-400 to-amber-400 rounded-full" />
+                        {/* Sağ Bağlantı Çubuğu (Garantili Boşluk) */}
+                        <div className="flex-1 min-w-[12px] sm:min-w-[16px] lg:min-w-[20px] h-0.5 sm:h-1 bg-gradient-to-r from-amber-500 to-amber-400 rounded-full shrink-0" />
                       </div>
                     )}
                   </React.Fragment>
@@ -269,48 +269,28 @@ export const CausalityChain: React.FC<CausalityChainProps> = ({ onGoToSummary, o
           </div>
         )}
 
-        {/* Alt Geri Bildirim Şeridi (Tekrarsız ve Doğrudan Açıklama) */}
+        {/* Alt Geri Bildirim Şeridi */}
         {lastFeedback.type && unplacedLinks.length > 0 && (
-          <div className="px-5 sm:px-6 pb-2">
+          <div className="px-5 sm:px-6 pb-4">
             <div
-              className={`p-3.5 rounded-xl border text-xs sm:text-sm flex items-start gap-2.5 transition-all shadow-2xs ${
+              className={`p-2.5 sm:p-3 rounded-xl border text-xs sm:text-sm flex items-center gap-2.5 transition-all shadow-2xs ${
                 lastFeedback.type === 'correct'
-                  ? 'bg-emerald-50 text-emerald-950 border-emerald-300'
-                  : 'bg-rose-50 text-rose-950 border-rose-300'
+                  ? 'bg-emerald-50 text-emerald-950 border-emerald-300 font-bold'
+                  : 'bg-rose-50 text-rose-950 border-rose-300 font-medium'
               }`}
             >
               {lastFeedback.type === 'correct' ? (
-                <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
               ) : (
-                <XCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
+                <XCircle className="w-4 h-4 text-rose-600 shrink-0" />
               )}
-              <p className="leading-relaxed font-semibold">
+              <p className="leading-snug">
                 {lastFeedback.message}
               </p>
             </div>
           </div>
         )}
 
-        {/* Alt Gezinme Butonları */}
-        <div className="bg-slate-50 px-5 sm:px-6 py-4 border-t border-slate-200 flex items-center justify-between gap-3">
-          {onGoToPrevTab && (
-            <button
-              onClick={onGoToPrevTab}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-700 hover:bg-slate-200 transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Olay Bilgi Kartlarına Dön</span>
-            </button>
-          )}
-
-          <button
-            onClick={onGoToSummary}
-            className="flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-xs sm:text-sm font-semibold bg-blue-900 hover:bg-blue-800 text-white transition-colors shadow-sm cursor-pointer"
-          >
-            <span>Karşılaştırmalı Analize İlerle</span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
-        </div>
       </div>
     </div>
   );

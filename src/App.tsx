@@ -11,14 +11,8 @@ export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>('harita');
   const [currentTreatyId, setCurrentTreatyId] = useState<TreatyId>('karlofca');
 
-  // Yerel depolama (localStorage) ile ilerlemeyi koruma
-  const [progress, setProgress] = useState<TreatyProgress>(() => {
-    try {
-      const saved = localStorage.getItem('osmanli_antlasmalar_ilerleme');
-      if (saved) return JSON.parse(saved);
-    } catch {
-      // sessiz devam
-    }
+  // İlerleme durumunu sıfırdan başlatan yardımcı fonksiyon
+  const createInitialProgress = (): TreatyProgress => {
     const initial: TreatyProgress = {};
     TREATIES.forEach(t => {
       initial[t.id] = {
@@ -29,15 +23,19 @@ export const App: React.FC = () => {
       };
     });
     return initial;
-  });
+  };
 
+  // İlerleme yalnızca oturum/sayfa bazlıdır (localStorage kullanılmaz)
+  const [progress, setProgress] = useState<TreatyProgress>(createInitialProgress);
+
+  // Önceki yerel depolama verilerini temizleme
   useEffect(() => {
     try {
-      localStorage.setItem('osmanli_antlasmalar_ilerleme', JSON.stringify(progress));
+      localStorage.removeItem('osmanli_antlasmalar_ilerleme');
     } catch {
       // sessiz devam
     }
-  }, [progress]);
+  }, []);
 
   const handleUpdateProgress = (
     id: TreatyId,
@@ -57,17 +55,7 @@ export const App: React.FC = () => {
   };
 
   const handleReset = () => {
-    const fresh: TreatyProgress = {};
-    TREATIES.forEach(t => {
-      fresh[t.id] = {
-        completed: false,
-        causesPlaced: [],
-        effectsPlaced: [],
-        attempts: 0
-      };
-    });
-    setProgress(fresh);
-    localStorage.removeItem('osmanli_antlasmalar_ilerleme');
+    setProgress(createInitialProgress());
     setCurrentTreatyId('karlofca');
     setActiveTab('harita');
   };

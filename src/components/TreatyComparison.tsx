@@ -4,13 +4,7 @@ import { TreatyProgress } from '../types';
 import { 
   CheckCircle2, 
   RotateCcw, 
-  ArrowLeft,
-  Columns3,
-  Waves,
-  ShieldAlert,
-  Scroll,
-  Award,
-  Sparkles
+  ArrowLeft
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -19,54 +13,6 @@ interface TreatyComparisonProps {
   onReset: () => void;
   onGoToPrevTab?: () => void;
 }
-
-type ComparisonDimension = 'all' | 'foreign_policy' | 'black_sea' | 'diplomacy' | 'breakthroughs';
-
-interface DimensionInfo {
-  id: ComparisonDimension;
-  label: string;
-  shortLabel: string;
-  icon: React.ComponentType<{ className?: string }>;
-  description: string;
-}
-
-const DIMENSIONS: DimensionInfo[] = [
-  {
-    id: 'all',
-    label: 'Tüm Kriterleri Karşılaştır (Özet Matris)',
-    shortLabel: 'Genel Matris',
-    icon: Columns3,
-    description: '5 antlaşmanın dış politika, Karadeniz hakimiyeti, diplomasi ve dönüm noktalarını tek tabloda kıyaslayınız.'
-  },
-  {
-    id: 'foreign_policy',
-    label: 'Dış Politika & Askeri Strateji',
-    shortLabel: 'Dış Politika',
-    icon: ShieldAlert,
-    description: 'Osmanlı dış politikasının savunmadan telafiye, barıştan varlık mücadelesine evrilmesi.'
-  },
-  {
-    id: 'black_sea',
-    label: 'Karadeniz & Boğazlar Hakimiyeti',
-    shortLabel: 'Karadeniz Statüsü',
-    icon: Waves,
-    description: 'Karadeniz’in Türk gölü statüsünün tehdit edilmesi, korunması ve kaybedilme süreci.'
-  },
-  {
-    id: 'diplomacy',
-    label: 'Diplomasi, Arabuluculuk & Garantörlük',
-    shortLabel: 'Diplomasi & Arabulucu',
-    icon: Scroll,
-    description: 'Masa başı müzakereleri, arabulucu Avrupalı devletler ve kapitülasyon dengeleri.'
-  },
-  {
-    id: 'breakthroughs',
-    label: 'Tarihsel İlkler & Kırılma Noktaları',
-    shortLabel: 'İlkler & Kırılmalar',
-    icon: Award,
-    description: 'Osmanlı siyasi tarihinde ilk kez yaşanan köklü askeri ve diplomatik değişimler.'
-  }
-];
 
 interface ComparisonData {
   treatyId: string;
@@ -211,7 +157,6 @@ const COMPARISON_DATA: ComparisonData[] = [
 ];
 
 export const TreatyComparison: React.FC<TreatyComparisonProps> = ({ progress, onReset, onGoToPrevTab }) => {
-  const [selectedDimension, setSelectedDimension] = useState<ComparisonDimension>('all');
   const [finished, setFinished] = useState<boolean>(false);
 
   const completedTreatiesCount = TREATIES.filter(t => progress[t.id]?.completed).length;
@@ -250,37 +195,16 @@ export const TreatyComparison: React.FC<TreatyComparisonProps> = ({ progress, on
     }
   };
 
-  const currentDimInfo = DIMENSIONS.find(d => d.id === selectedDimension) || DIMENSIONS[0];
-
   return (
     <div className="space-y-4">
-      {/* Üst Başlık & Tamamlanma Durumu */}
-      <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 text-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-800">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <span className="text-[11px] font-mono font-bold tracking-wider text-amber-300 bg-amber-950/70 border border-amber-400/30 px-2.5 py-0.5 rounded">
-              KARŞILAŞTIRMALI ANALİZ MATRİSİ
-            </span>
-            <h2 className="text-lg sm:text-2xl font-bold tracking-tight text-white">
-              5 Antlaşmanın Tematik Kıyaslaması (1699 - 1774)
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
-              Osmanlı Devleti’nin 18. yüzyıl boyunca imzaladığı 5 temel antlaşmayı dış politika, Karadeniz hakimiyeti, diplomasi ve dönüm noktaları üzerinden tek bakışta karşılaştırınız.
-            </p>
-          </div>
-
-          <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm border border-white/10 px-4 py-2.5 rounded-xl shrink-0">
-            <div className="text-right">
-              <div className="text-[10px] text-slate-300 uppercase tracking-wider font-semibold">İncelenen Duraklar</div>
-              <div className="text-base font-bold text-amber-300">
-                {completedTreatiesCount} / {TREATIES.length} Tamamlandı
-              </div>
-            </div>
-            <div className="w-9 h-9 rounded-full bg-amber-400 text-slate-900 flex items-center justify-center font-extrabold text-sm shadow-sm">
-              {completedTreatiesCount}
-            </div>
-          </div>
-        </div>
+      {/* Açıklama ve Yönlendirme Metni */}
+      <div className="bg-white rounded-xl border border-slate-200 p-3.5 sm:p-4 text-xs sm:text-sm text-slate-700 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+        <p>
+          17-18. yüzyıl boyunca imzalanan antlaşmaları dış politika, Karadeniz hakimiyeti, diplomasi ve dönüm noktaları üzerinden karşılaştırınız.
+        </p>
+        <span className="text-xs font-semibold text-slate-600 bg-slate-100 px-3 py-1 rounded-full shrink-0 border border-slate-200">
+          {completedTreatiesCount} / {TREATIES.length} Tamamlandı
+        </span>
       </div>
 
       {finished && (
@@ -291,74 +215,70 @@ export const TreatyComparison: React.FC<TreatyComparisonProps> = ({ progress, on
           <div>
             <h4 className="font-bold text-sm sm:text-base">Etkinlik Başarıyla Tamamlandı</h4>
             <p className="text-xs sm:text-sm text-emerald-800 mt-0.5">
-              17-18. Yüzyıl Osmanlı Diplomasisi analizini, neden-sonuç sınıflandırmalarını ve nedensellik zincirini eksiksiz tamamladınız.
+              17-18. Yüzyıl Osmanlı Diplomasisi analizini, neden-sonuç sınıflandırmalarını ve antlaşma kronolojisini eksiksiz tamamladınız.
             </p>
           </div>
         </div>
       )}
 
-      {/* Tematik Filtreleme Butonları */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-3 sm:p-4 shadow-xs space-y-3">
-        <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
-          <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
-            Karşılaştırma Boyutu Seçiniz:
-          </span>
-          <span className="text-[11px] text-slate-500 hidden sm:inline">
-            Farklı boyutlara dokunarak karşılaştırmalı analizi daraltabilir veya genel matrise dönebilirsiniz.
-          </span>
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
-          {DIMENSIONS.map((dim) => {
-            const isSelected = selectedDimension === dim.id;
-            const Icon = dim.icon;
-
-            return (
-              <button
-                key={dim.id}
-                onClick={() => setSelectedDimension(dim.id)}
-                className={`flex items-center gap-2 p-2.5 rounded-xl border text-left transition-all text-xs cursor-pointer ${
-                  isSelected
-                    ? 'bg-blue-900 text-white border-blue-900 shadow-sm ring-2 ring-blue-300'
-                    : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
-                }`}
-              >
-                <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${
-                  isSelected ? 'bg-blue-800 text-amber-300' : 'bg-white text-slate-600 border border-slate-200'
-                }`}>
-                  <Icon className="w-3.5 h-3.5" />
-                </div>
-                <div className="truncate font-semibold">
-                  {dim.shortLabel}
-                </div>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Seçili Boyut Açıklaması */}
-        <div className="bg-slate-50/80 rounded-lg p-2.5 text-xs text-slate-600 border border-slate-200/60 flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-blue-800 shrink-0" />
-          <span>{currentDimInfo.description}</span>
-        </div>
-      </div>
-
       {/* 5 Antlaşmalı Karşılaştırma Izgarası */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3.5 items-stretch">
         {COMPARISON_DATA.map((item) => {
+          const themes: Record<string, {
+            cardBg: string;
+            yearBadge: string;
+            headerBorder: string;
+            itemBg: string;
+          }> = {
+            karlofca: {
+              cardBg: 'bg-rose-50/70 border-rose-200/90',
+              yearBadge: 'bg-white text-rose-950 border-rose-200',
+              headerBorder: 'border-rose-200/70',
+              itemBg: 'bg-white/90 border-rose-100/90'
+            },
+            prut: {
+              cardBg: 'bg-amber-50/75 border-amber-200/90',
+              yearBadge: 'bg-white text-amber-950 border-amber-200',
+              headerBorder: 'border-amber-200/70',
+              itemBg: 'bg-white/90 border-amber-100/90'
+            },
+            pasarofca: {
+              cardBg: 'bg-indigo-50/70 border-indigo-200/90',
+              yearBadge: 'bg-white text-indigo-950 border-indigo-200',
+              headerBorder: 'border-indigo-200/70',
+              itemBg: 'bg-white/90 border-indigo-100/90'
+            },
+            belgrad: {
+              cardBg: 'bg-emerald-50/70 border-emerald-200/90',
+              yearBadge: 'bg-white text-emerald-950 border-emerald-200',
+              headerBorder: 'border-emerald-200/70',
+              itemBg: 'bg-white/90 border-emerald-100/90'
+            },
+            kucuk_kaynarca: {
+              cardBg: 'bg-red-50/70 border-red-200/90',
+              yearBadge: 'bg-white text-red-950 border-red-200',
+              headerBorder: 'border-red-200/70',
+              itemBg: 'bg-white/90 border-red-100/90'
+            }
+          };
+
+          const theme = themes[item.treatyId] || {
+            cardBg: 'bg-white border-slate-200',
+            yearBadge: 'bg-white text-slate-900 border-slate-200',
+            headerBorder: 'border-slate-100',
+            itemBg: 'bg-slate-50 border-slate-100'
+          };
+
           return (
             <div
               key={item.treatyId}
-              className="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs flex flex-col justify-between space-y-3.5 hover:shadow-sm transition-shadow"
+              className={`${theme.cardBg} rounded-2xl border p-4 shadow-xs flex flex-col justify-between space-y-3.5 hover:shadow-sm transition-all`}
             >
               {/* Kart Başlığı */}
-              <div className="border-b border-slate-100 pb-3 space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-mono font-extrabold text-blue-950 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded">
+              <div className={`border-b ${theme.headerBorder} pb-3 space-y-1.5`}>
+                <div>
+                  <span className={`text-xs font-mono font-extrabold px-2 py-0.5 rounded border shadow-2xs ${theme.yearBadge}`}>
                     {item.year}
-                  </span>
-                  <span className="text-[10px] font-bold text-slate-400">
-                    #{item.treatyId === 'karlofca' ? 1 : item.treatyId === 'prut' ? 2 : item.treatyId === 'pasarofca' ? 3 : item.treatyId === 'belgrad' ? 4 : 5}
                   </span>
                 </div>
                 <h3 className="text-sm font-bold text-slate-900 leading-tight">
@@ -370,74 +290,34 @@ export const TreatyComparison: React.FC<TreatyComparisonProps> = ({ progress, on
               </div>
 
               {/* Karşılaştırma Maddeleri */}
-              <div className="space-y-2.5 text-xs grow">
+              <div className="space-y-2 text-xs grow">
                 {/* Dış Politika Boyutu */}
-                {(selectedDimension === 'all' || selectedDimension === 'foreign_policy') && (
-                  <div className={`rounded-xl p-2.5 space-y-1 ${
-                    selectedDimension === 'foreign_policy'
-                      ? 'bg-rose-50 border border-rose-200 text-rose-950 shadow-2xs'
-                      : 'bg-slate-50 border border-slate-100'
-                  }`}>
-                    <div className="flex items-center gap-1.5 font-bold text-[11px] text-slate-800">
-                      <ShieldAlert className="w-3.5 h-3.5 text-rose-700 shrink-0" />
-                      <span>{item.foreignPolicy.tag}</span>
-                    </div>
-                    <p className="text-[11.5px] text-slate-700 leading-snug">
-                      {item.foreignPolicy.summary}
-                    </p>
-                  </div>
-                )}
+                <div className={`rounded-xl p-2.5 ${theme.itemBg} border shadow-2xs`}>
+                  <p className="text-[11.5px] text-slate-700 leading-relaxed">
+                    {item.foreignPolicy.summary}
+                  </p>
+                </div>
 
                 {/* Karadeniz Boyutu */}
-                {(selectedDimension === 'all' || selectedDimension === 'black_sea') && (
-                  <div className={`rounded-xl p-2.5 space-y-1 ${
-                    selectedDimension === 'black_sea'
-                      ? 'bg-blue-50 border border-blue-200 text-blue-950 shadow-2xs'
-                      : 'bg-slate-50 border border-slate-100'
-                  }`}>
-                    <div className="flex items-center gap-1.5 font-bold text-[11px] text-blue-950">
-                      <Waves className="w-3.5 h-3.5 text-blue-700 shrink-0" />
-                      <span>{item.blackSea.tag}</span>
-                    </div>
-                    <p className="text-[11.5px] text-slate-700 leading-snug">
-                      {item.blackSea.summary}
-                    </p>
-                  </div>
-                )}
+                <div className={`rounded-xl p-2.5 ${theme.itemBg} border shadow-2xs`}>
+                  <p className="text-[11.5px] text-slate-700 leading-relaxed">
+                    {item.blackSea.summary}
+                  </p>
+                </div>
 
                 {/* Diplomasi & Arabuluculuk Boyutu */}
-                {(selectedDimension === 'all' || selectedDimension === 'diplomacy') && (
-                  <div className={`rounded-xl p-2.5 space-y-1 ${
-                    selectedDimension === 'diplomacy'
-                      ? 'bg-amber-50 border border-amber-200 text-amber-950 shadow-2xs'
-                      : 'bg-slate-50 border border-slate-100'
-                  }`}>
-                    <div className="flex items-center gap-1.5 font-bold text-[11px] text-amber-950">
-                      <Scroll className="w-3.5 h-3.5 text-amber-700 shrink-0" />
-                      <span>{item.diplomacy.tag}</span>
-                    </div>
-                    <p className="text-[11.5px] text-slate-700 leading-snug">
-                      {item.diplomacy.summary}
-                    </p>
-                  </div>
-                )}
+                <div className={`rounded-xl p-2.5 ${theme.itemBg} border shadow-2xs`}>
+                  <p className="text-[11.5px] text-slate-700 leading-relaxed">
+                    {item.diplomacy.summary}
+                  </p>
+                </div>
 
                 {/* İlkler & Kırılmalar Boyutu */}
-                {(selectedDimension === 'all' || selectedDimension === 'breakthroughs') && (
-                  <div className={`rounded-xl p-2.5 space-y-1 ${
-                    selectedDimension === 'breakthroughs'
-                      ? 'bg-emerald-50 border border-emerald-200 text-emerald-950 shadow-2xs'
-                      : 'bg-slate-50 border border-slate-100'
-                  }`}>
-                    <div className="flex items-center gap-1.5 font-bold text-[11px] text-emerald-950">
-                      <Award className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
-                      <span>{item.breakthroughs.tag}</span>
-                    </div>
-                    <p className="text-[11.5px] text-slate-700 leading-snug">
-                      {item.breakthroughs.summary}
-                    </p>
-                  </div>
-                )}
+                <div className={`rounded-xl p-2.5 ${theme.itemBg} border shadow-2xs`}>
+                  <p className="text-[11.5px] text-slate-700 leading-relaxed">
+                    {item.breakthroughs.summary}
+                  </p>
+                </div>
               </div>
             </div>
           );
@@ -453,7 +333,7 @@ export const TreatyComparison: React.FC<TreatyComparisonProps> = ({ progress, on
               className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-100 border border-slate-200 transition-colors cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>Nedensellik Zincirine Dön</span>
+              <span>Antlaşma Kronolojisine Dön</span>
             </button>
           )}
 
