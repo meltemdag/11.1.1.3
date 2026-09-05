@@ -179,6 +179,8 @@ export const CausalityChain: React.FC<CausalityChainProps> = ({ onGoToSummary })
     const key = slotKey(treatyId, type);
     const placedId = placed[key];
     const placedItem = CHAIN_ITEMS.find(i => i.id === placedId);
+    // Zincirin ilk öğesi negatif boşluk almaz; aksi hâlde soldan kırpılır
+    const isFirst = linkIndex === 0;
     const zIndex = linkIndex % 2 === 0 ? 20 : 10;
     linkIndex++;
 
@@ -198,7 +200,7 @@ export const CausalityChain: React.FC<CausalityChainProps> = ({ onGoToSummary })
         }}
         title={placedItem ? placedItem.text : slotTitle}
         style={{ zIndex }}
-        className={`relative shrink-0 -ml-3.5 w-[108px] min-h-[168px] sm:w-[116px] sm:min-h-[176px] xl:w-[124px] xl:min-h-[188px] rounded-full flex flex-col items-center justify-center p-2 sm:p-2.5 text-center transition-all cursor-pointer ${
+        className={`relative shrink-0 ${isFirst ? '' : '-ml-3.5'} w-[108px] min-h-[168px] sm:w-[116px] sm:min-h-[176px] xl:w-[124px] xl:min-h-[188px] rounded-full flex flex-col items-center justify-center p-2 sm:p-2.5 text-center transition-all cursor-pointer ${
           placedItem
             ? 'bg-[#eef0da] border-[3px] border-olive-seal shadow-parchment'
             : isHighlightable
@@ -226,13 +228,23 @@ export const CausalityChain: React.FC<CausalityChainProps> = ({ onGoToSummary })
             </button>
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center space-y-0.5 text-center">
+          <div className="flex flex-col items-center justify-center text-center leading-tight">
             <span className={`text-[8.5px] sm:text-[9px] font-bold uppercase tracking-wider ${type === 'cause' ? 'text-brass' : 'text-seal'}`}>
               {type === 'cause' ? 'Neden' : 'Sonuç'}
             </span>
-            <span className="text-[10px] sm:text-[10.5px] font-semibold text-ink-soft leading-tight">
-              {isHighlightable ? 'Buraya Yerleştir' : 'Sürükle veya seç'}
-            </span>
+            {isHighlightable ? (
+              <span className="text-[10px] sm:text-[10.5px] font-semibold text-ink-soft">
+                Buraya
+                <br />
+                Yerleştir
+              </span>
+            ) : (
+              <span className="text-[10px] sm:text-[10.5px] font-semibold text-ink-soft">
+                Sürükle
+                <br />
+                veya seç
+              </span>
+            )}
           </div>
         )}
       </div>
@@ -240,13 +252,14 @@ export const CausalityChain: React.FC<CausalityChainProps> = ({ onGoToSummary })
   };
 
   const renderSeal = (treatyId: TreatyId, year: number, shortName: string) => {
+    const isFirst = linkIndex === 0;
     const zIndex = linkIndex % 2 === 0 ? 30 : 40;
     linkIndex++;
     return (
       <div
         key={`seal-${treatyId}`}
         style={{ zIndex }}
-        className="relative shrink-0 -ml-3.5 w-12 h-12 sm:w-[52px] sm:h-[52px] xl:w-[56px] xl:h-[56px] rounded-full bg-gradient-to-b from-seal-light via-seal to-seal-dark text-parchment-100 flex flex-col items-center justify-center p-0.5 text-center border-[3px] border-brass shadow-wax"
+        className={`relative shrink-0 ${isFirst ? '' : '-ml-3.5'} w-12 h-12 sm:w-[52px] sm:h-[52px] xl:w-[56px] xl:h-[56px] rounded-full bg-gradient-to-b from-seal-light via-seal to-seal-dark text-parchment-100 flex flex-col items-center justify-center p-0.5 text-center border-[3px] border-brass shadow-wax`}
       >
         <span className="text-[10px] sm:text-[11px] font-black font-mono text-brass-pale leading-none">
           {year}
@@ -279,7 +292,7 @@ export const CausalityChain: React.FC<CausalityChainProps> = ({ onGoToSummary })
         {/* Zincir Rayı: iç içe geçmiş halkalar */}
         <div className="py-5 px-2 sm:px-4 bg-parchment-300/40 border-b border-parchment-400/70">
           <div className="overflow-x-auto pb-2 pt-1 scrollbar-thin">
-            <div className="flex items-center justify-center min-w-[1000px] lg:min-w-0 px-2">
+            <div className="flex items-center lg:justify-center px-2">
               {TREATIES.map((treaty) => (
                 <React.Fragment key={treaty.id}>
                   {renderRing(treaty.id, 'cause')}
