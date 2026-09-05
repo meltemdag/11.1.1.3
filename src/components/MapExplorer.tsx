@@ -73,13 +73,7 @@ export const MapExplorer: React.FC<MapExplorerProps> = ({ progress, onSelectTrea
               return (
                 <button
                   key={treaty.id}
-                  onClick={() => {
-                    if (selectedId === treaty.id) {
-                      onSelectTreaty(treaty.id);
-                    } else {
-                      setSelectedId(treaty.id);
-                    }
-                  }}
+                  onClick={() => setSelectedId(treaty.id)}
                   onMouseEnter={() => setHoveredId(treaty.id)}
                   onMouseLeave={() => setHoveredId(null)}
                   style={{
@@ -251,7 +245,7 @@ export const MapExplorer: React.FC<MapExplorerProps> = ({ progress, onSelectTrea
               {/* Olay Bilgi Kartına Git Butonu */}
               <button
                 onClick={() => onSelectTreaty(selectedTreaty.id)}
-                className="w-full group flex items-center justify-between py-2.5 px-3.5 bg-gradient-to-r from-ink via-ink-light to-ink hover:from-ink-light hover:via-ink hover:to-ink-light text-parchment-100 rounded-xl text-xs sm:text-sm font-semibold shadow-wax hover:shadow-parchment transition-all cursor-pointer border border-brass/50"
+                className="w-full group flex items-center justify-between py-2.5 px-3.5 bg-gradient-to-r from-ink via-ink-light to-ink hover:from-ink-light hover:via-ink hover:to-ink-light text-parchment-100 rounded-xl text-xs sm:text-sm font-semibold shadow-wax hover:shadow-parchment transition-all cursor-pointer border border-brass/50 animate-subtle-pulse"
               >
                 <div className="text-left">
                   <div className="font-antique font-bold text-parchment-50 group-hover:text-brass-pale transition-colors">

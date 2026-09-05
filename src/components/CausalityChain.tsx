@@ -94,6 +94,7 @@ const CHAIN_ITEMS: ChainItem[] = [
 export const CausalityChain: React.FC<CausalityChainProps> = ({ onGoToSummary }) => {
   const [placed, setPlaced] = useState<{ [slotKey: string]: string }>({});
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState<boolean>(false);
   const [lastFeedback, setLastFeedback] = useState<{
     type: 'correct' | 'wrong' | null;
     message: string;
@@ -144,10 +145,17 @@ export const CausalityChain: React.FC<CausalityChainProps> = ({ onGoToSummary })
   // Drag & drop
   const handleDragStart = (e: React.DragEvent, item: ChainItem) => {
     e.dataTransfer.setData('text/plain', JSON.stringify(item));
+    setIsDragging(true);
+    setSelectedItemId(item.id);
+  };
+
+  const handleDragEnd = () => {
+    setIsDragging(false);
   };
 
   const handleDrop = (e: React.DragEvent, targetTreaty: TreatyId, targetType: 'cause' | 'effect') => {
     e.preventDefault();
+    setIsDragging(false);
     try {
       const dataStr = e.dataTransfer.getData('text/plain');
       if (dataStr) {
@@ -179,7 +187,7 @@ export const CausalityChain: React.FC<CausalityChainProps> = ({ onGoToSummary })
 
     const treaty = TREATIES.find(t => t.id === treatyId)!;
     const slotTitle = `${treaty.title} — ${type === 'cause' ? 'Nedenleri' : 'Sonuçları'}`;
-    const isHighlightable = !!selectedItemId;
+    const isHighlightable = !placedItem && (!!selectedItemId || isDragging);
 
     return (
       <div
@@ -195,10 +203,10 @@ export const CausalityChain: React.FC<CausalityChainProps> = ({ onGoToSummary })
         style={{ zIndex }}
         className={`relative shrink-0 ${isFirst ? '' : '-ml-3.5'} w-[108px] min-h-[168px] sm:w-[116px] sm:min-h-[176px] xl:w-[124px] xl:min-h-[188px] rounded-full flex flex-col items-center justify-center p-2 sm:p-2.5 text-center transition-all cursor-pointer ${
           placedItem
-            ? 'bg-[#eef0da] border-[3px] border-olive-seal shadow-parchment'
+            ? 'bg-[#eef0da] border-[3px] border-solid border-olive-seal shadow-parchment'
             : isHighlightable
-            ? 'bg-brass/15 border-[3px] border-seal ring-2 ring-seal/40 cursor-pointer animate-pulse'
-            : 'parchment-deep border-[3px] border-brass/80 hover:border-brass shadow-parchment'
+            ? 'bg-brass/15 border-[3px] border-dashed border-seal ring-2 ring-seal/40 cursor-pointer animate-pulse'
+            : 'parchment-deep border-[3px] border-solid border-brass/80 hover:border-brass shadow-parchment'
         }`}
       >
         {placedItem ? (
@@ -211,30 +219,23 @@ export const CausalityChain: React.FC<CausalityChainProps> = ({ onGoToSummary })
             </p>
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center text-center leading-tight">
-            <span className={`text-[8.5px] sm:text-[9px] font-bold uppercase tracking-wider ${type === 'cause' ? 'text-brass' : 'text-seal'}`}>
+          <div className="flex flex-col items-center justify-center text-center p-1 w-full">
+            <span
+              className={`font-antique font-bold tracking-wider uppercase select-none ${
+                type === 'cause'
+                  ? 'text-brass-dark text-[10px] sm:text-[11px]'
+                  : 'text-seal text-[10px] sm:text-[11px]'
+              }`}
+            >
               {type === 'cause' ? 'Neden' : 'Sonuç'}
             </span>
-            {isHighlightable ? (
-              <span className="text-[10px] sm:text-[10.5px] font-semibold text-ink-soft">
-                Buraya
-                <br />
-                Yerleştir
-              </span>
-            ) : (
-              <span className="text-[10px] sm:text-[10.5px] font-semibold text-ink-soft">
-                Sürükle
-                <br />
-                veya seç
-              </span>
-            )}
           </div>
         )}
       </div>
     );
   };
 
-  const renderSeal = (treatyId: TreatyId, year: number, shortName: string) => {
+  const renderSeal = (treatyId: TreatyId, shortName: string) => {
     const isFirst = linkIndex === 0;
     const zIndex = linkIndex % 2 === 0 ? 30 : 40;
     linkIndex++;
@@ -242,14 +243,17 @@ export const CausalityChain: React.FC<CausalityChainProps> = ({ onGoToSummary })
       <div
         key={`seal-${treatyId}`}
         style={{ zIndex }}
-        className={`relative shrink-0 ${isFirst ? '' : '-ml-3.5'} w-12 h-12 sm:w-[52px] sm:h-[52px] xl:w-[56px] xl:h-[56px] rounded-full bg-gradient-to-b from-seal-light via-seal to-seal-dark text-parchment-100 flex flex-col items-center justify-center p-0.5 text-center border-[3px] border-brass shadow-wax`}
+        className={`relative shrink-0 ${isFirst ? '' : '-ml-3.5'} w-[50px] h-[50px] sm:w-[56px] sm:h-[56px] xl:w-[62px] xl:h-[62px] rounded-full bg-gradient-to-b from-seal-light via-seal to-seal-dark text-parchment-100 flex items-center justify-center p-1 text-center border-[3px] border-brass shadow-wax`}
       >
-        <span className="text-[10px] sm:text-[11px] font-black font-mono text-brass-pale leading-none">
-          {year}
-        </span>
-        <span className="text-[7.5px] sm:text-[8.5px] font-bold text-parchment-100 leading-tight mt-0.5 px-0.5 text-center">
-          {shortName}
-        </span>
+        {shortName === 'Küçük Kaynarca' ? (
+          <span className="text-[9.5px] sm:text-[10.5px] xl:text-[11.5px] font-bold text-parchment-100 leading-tight text-center select-none font-antique tracking-wide">
+            Küçük<br />Kaynarca
+          </span>
+        ) : (
+          <span className="text-[11px] sm:text-[12.5px] xl:text-[13.5px] font-bold text-parchment-100 leading-tight text-center select-none font-antique tracking-wide">
+            {shortName}
+          </span>
+        )}
       </div>
     );
   };
@@ -281,7 +285,6 @@ export const CausalityChain: React.FC<CausalityChainProps> = ({ onGoToSummary })
                   {renderRing(treaty.id, 'cause')}
                   {renderSeal(
                     treaty.id,
-                    treaty.year,
                     treaty.title.replace(' Antlaşması', '')
                   )}
                   {renderRing(treaty.id, 'effect')}
@@ -303,6 +306,7 @@ export const CausalityChain: React.FC<CausalityChainProps> = ({ onGoToSummary })
                     key={item.id}
                     draggable
                     onDragStart={(e) => handleDragStart(e, item)}
+                    onDragEnd={handleDragEnd}
                     onClick={() => setSelectedItemId(isSelected ? null : item.id)}
                     className={`rounded-2xl p-3.5 transition-all parchment-deep shadow-2xs cursor-grab active:cursor-grabbing select-none flex flex-col justify-between border-2 ${
                       isSelected

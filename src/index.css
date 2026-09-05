@@ -125,3 +125,22 @@
   animation: warm-light-wave 2s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 
+/* Kartın renginin sanki ışık vuruyormuş gibi aydınlanıp sönmesi efekti */
+@keyframes subtle-card-pulse {
+  0%, 100% {
+    filter: brightness(0.92);
+    box-shadow: 0 2px 4px rgba(43, 29, 16, 0.35);
+    border-color: rgba(163, 118, 42, 0.5);
+  }
+  50% {
+    filter: brightness(1.42) contrast(1.05);
+    box-shadow: 0 4px 18px rgba(163, 118, 42, 0.45), 0 0 16px rgba(245, 158, 11, 0.4);
+    border-color: rgba(234, 179, 8, 0.95);
+  }
+}
+
+.animate-subtle-pulse {
+  animation: subtle-card-pulse 1.9s ease-in-out infinite;
+}
+
+
