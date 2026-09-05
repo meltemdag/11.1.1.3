@@ -1,9 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { TREATIES } from '../data/treaties';
-import { 
-  CheckCircle2, 
-  XCircle, 
-  RotateCcw, 
+import {
+  CheckCircle2,
+  XCircle,
+  RotateCcw,
   Link2
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
@@ -19,6 +19,9 @@ interface ChainLinkItem {
   text: string;
   hint: string;
 }
+
+// Tarihî temaya uygun konfeti renkleri: parşömen, pirinç altın, mühür kırmızısı
+const CONFETTI_COLORS = ['#e8d5a4', '#a3762a', '#7c1d1d', '#f6efdc', '#6f5228'];
 
 const CHAIN_LINKS: ChainLinkItem[] = [
   {
@@ -78,7 +81,8 @@ export const CausalityChain: React.FC<CausalityChainProps> = () => {
         confetti({
           particleCount: 90,
           spread: 80,
-          origin: { y: 0.65 }
+          origin: { y: 0.65 },
+          colors: CONFETTI_COLORS
         });
       }
     } else {
@@ -127,15 +131,15 @@ export const CausalityChain: React.FC<CausalityChainProps> = () => {
   return (
     <div className="space-y-4">
       {/* Ana Kart */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="parchment-surface rounded-2xl border-2 border-parchment-400/70 shadow-parchment overflow-hidden">
         {/* Açıklama ve Sıfırlama Şeridi */}
-        <div className="bg-slate-50 px-5 sm:px-6 py-3 border-b border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs sm:text-sm text-slate-700">
+        <div className="parchment-deep px-5 sm:px-6 py-3 border-b border-parchment-400/70 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs sm:text-sm text-ink-light">
           <div>
             Aşağıdaki maddeleri inceleyiniz; antlaşmalar arasında Karadeniz'in statüsünün değişimini gösteren zincir halkalarını doğru sırayla yerleştiriniz.
           </div>
           <button
             onClick={handleReset}
-            className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-900 px-2 py-1 rounded hover:bg-slate-200 transition-colors shrink-0 cursor-pointer"
+            className="flex items-center gap-1 text-xs text-ink-soft hover:text-ink px-2 py-1 rounded hover:bg-parchment-300 transition-colors shrink-0 cursor-pointer"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>Zinciri Sıfırla</span>
@@ -143,7 +147,7 @@ export const CausalityChain: React.FC<CausalityChainProps> = () => {
         </div>
 
         {/* Üst Alan: Yatay Zincir Halkaları Rayı (Tüm Ekran Genişliğini Dolduran Yapı) */}
-        <div className="py-4 px-2 sm:px-4 bg-slate-900/5 border-b border-slate-200">
+        <div className="py-4 px-2 sm:px-4 bg-parchment-300/40 border-b border-parchment-400/70">
           <div className="overflow-x-auto pb-1 pt-1 scrollbar-thin">
             <div className="w-full flex items-center justify-between min-w-[800px] lg:min-w-0 px-1 sm:px-2">
               {TREATIES.map((treaty, idx) => {
@@ -154,13 +158,13 @@ export const CausalityChain: React.FC<CausalityChainProps> = () => {
 
                 return (
                   <React.Fragment key={treaty.id}>
-                    {/* Antlaşma Yuvarlak Halkası */}
+                    {/* Antlaşma Yuvarlak Halkası (balmumu mühür) */}
                     <div className="flex flex-col items-center shrink-0">
-                      <div className="w-12 h-12 sm:w-13 sm:h-13 lg:w-14 lg:h-14 rounded-full bg-gradient-to-br from-slate-900 via-slate-800 to-blue-950 text-white flex flex-col items-center justify-center p-0.5 text-center border-2 border-amber-400 shadow-sm relative group transition-transform hover:scale-105 shrink-0">
-                        <span className="text-[10.5px] sm:text-[11px] lg:text-xs font-black font-mono text-amber-300 leading-none">
+                      <div className="w-12 h-12 sm:w-13 sm:h-13 lg:w-14 lg:h-14 rounded-full bg-gradient-to-b from-seal-light via-seal to-seal-dark text-parchment-100 flex flex-col items-center justify-center p-0.5 text-center border-2 border-brass shadow-wax relative group transition-transform hover:scale-105 shrink-0">
+                        <span className="text-[10.5px] sm:text-[11px] lg:text-xs font-black font-mono text-brass-pale leading-none">
                           {treaty.year}
                         </span>
-                        <span className="text-[8px] sm:text-[8.5px] lg:text-[9.5px] font-bold text-white leading-tight mt-0.5 px-0.5 text-center">
+                        <span className="text-[8px] sm:text-[8.5px] lg:text-[9.5px] font-bold text-parchment-100 leading-tight mt-0.5 px-0.5 text-center">
                           {treaty.title.replace(' Antlaşması', '')}
                         </span>
                       </div>
@@ -170,7 +174,7 @@ export const CausalityChain: React.FC<CausalityChainProps> = () => {
                     {!isLast && (
                       <div className="flex-1 flex items-center justify-center min-w-0 px-1 sm:px-1.5 lg:px-2">
                         {/* Sol Bağlantı Çubuğu (Garantili Boşluk) */}
-                        <div className="flex-1 min-w-[12px] sm:min-w-[16px] lg:min-w-[20px] h-0.5 sm:h-1 bg-gradient-to-r from-amber-400 to-amber-500 rounded-full shrink-0" />
+                        <div className="flex-1 min-w-[12px] sm:min-w-[16px] lg:min-w-[20px] h-0.5 sm:h-1 bg-gradient-to-r from-brass/50 to-brass rounded-full shrink-0" />
 
                         {/* Yuvarlak Zincir Bağlantı Yuvası */}
                         <div
@@ -182,21 +186,21 @@ export const CausalityChain: React.FC<CausalityChainProps> = () => {
                               if (item) handlePlaceLink(item, slotIndex);
                             }
                           }}
-                          className={`w-[125px] h-[125px] sm:w-[145px] sm:h-[145px] md:w-[170px] md:h-[170px] lg:w-[190px] lg:h-[190px] xl:w-[210px] xl:h-[210px] rounded-full flex flex-col items-center justify-center p-2 sm:p-2.5 lg:p-3 text-center transition-all relative shrink-0 mx-1 sm:mx-1.5 ${
+                          className={`w-[136px] min-h-[136px] sm:w-[150px] sm:min-h-[150px] md:w-[170px] md:h-[170px] md:min-h-[170px] lg:w-[190px] lg:h-[190px] xl:w-[210px] xl:h-[210px] rounded-[2rem] md:rounded-full flex flex-col items-center justify-center p-2 sm:p-2.5 lg:p-3 text-center transition-all relative shrink-0 mx-1 sm:mx-1.5 ${
                             placedLinkItem
-                              ? 'bg-emerald-50 border-2 sm:border-3 border-emerald-500 text-emerald-950 shadow-md ring-2 ring-emerald-300'
+                              ? 'bg-[#eef0da] border-2 sm:border-3 border-olive-seal text-ink shadow-parchment ring-2 ring-olive-seal/40'
                               : selectedLinkId
-                              ? 'bg-blue-50 border-2 sm:border-3 border-dashed border-blue-500 ring-4 ring-blue-300 cursor-pointer animate-pulse scale-102'
-                              : 'bg-amber-50/70 border-2 sm:border-3 border-dashed border-amber-400/90 hover:border-amber-500 hover:bg-amber-100/70 cursor-pointer shadow-inner'
+                              ? 'bg-seal/10 border-2 sm:border-3 border-dashed border-seal ring-4 ring-seal/30 cursor-pointer animate-pulse scale-105'
+                              : 'bg-brass/10 border-2 sm:border-3 border-dashed border-brass/70 hover:border-brass hover:bg-brass/20 cursor-pointer shadow-inner'
                           }`}
                           title={placedLinkItem ? placedLinkItem.text : undefined}
                         >
                           {placedLinkItem ? (
                             <div className="flex flex-col items-center justify-center space-y-1 text-center px-2 py-0.5 w-full max-w-[94%]">
-                              <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center shadow-xs shrink-0">
+                              <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-olive-seal text-parchment-100 flex items-center justify-center shadow-2xs shrink-0">
                                 <CheckCircle2 className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                               </div>
-                              <p className="text-[11px] sm:text-[11.5px] md:text-xs lg:text-[12.5px] xl:text-[13px] font-semibold text-emerald-950 leading-snug">
+                              <p className="text-[11px] sm:text-[11.5px] md:text-xs lg:text-[12.5px] xl:text-[13px] font-semibold text-ink leading-snug">
                                 {placedLinkItem.text}
                               </p>
                               <button
@@ -204,7 +208,7 @@ export const CausalityChain: React.FC<CausalityChainProps> = () => {
                                   e.stopPropagation();
                                   handleRemoveLink(slotIndex);
                                 }}
-                                className="text-[9.5px] sm:text-[10px] text-rose-700 hover:text-rose-900 font-bold underline hover:no-underline cursor-pointer pt-0.5 shrink-0"
+                                className="text-[9.5px] sm:text-[10px] text-seal hover:text-seal-dark font-bold underline hover:no-underline cursor-pointer pt-0.5 shrink-0"
                                 title="Bağlantıyı kaldır"
                               >
                                 Kaldır
@@ -212,10 +216,10 @@ export const CausalityChain: React.FC<CausalityChainProps> = () => {
                             </div>
                           ) : (
                             <div className="flex flex-col items-center justify-center space-y-1 p-1 text-center">
-                              <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-amber-200 text-amber-900 flex items-center justify-center border border-amber-300 shadow-2xs">
+                              <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-brass/25 text-brass flex items-center justify-center border border-brass/50 shadow-2xs">
                                 <Link2 className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                               </div>
-                              <span className="text-[11px] sm:text-xs font-semibold text-slate-700 leading-tight">
+                              <span className="text-[11px] sm:text-xs font-semibold text-ink-light leading-tight">
                                 {selectedLinkId ? 'Buraya Yerleştir' : 'Sürükle veya seç'}
                               </span>
                             </div>
@@ -223,7 +227,7 @@ export const CausalityChain: React.FC<CausalityChainProps> = () => {
                         </div>
 
                         {/* Sağ Bağlantı Çubuğu (Garantili Boşluk) */}
-                        <div className="flex-1 min-w-[12px] sm:min-w-[16px] lg:min-w-[20px] h-0.5 sm:h-1 bg-gradient-to-r from-amber-500 to-amber-400 rounded-full shrink-0" />
+                        <div className="flex-1 min-w-[12px] sm:min-w-[16px] lg:min-w-[20px] h-0.5 sm:h-1 bg-gradient-to-r from-brass to-brass/50 rounded-full shrink-0" />
                       </div>
                     )}
                   </React.Fragment>
@@ -246,19 +250,19 @@ export const CausalityChain: React.FC<CausalityChainProps> = () => {
                     draggable
                     onDragStart={(e) => handleDragStart(e, linkItem)}
                     onClick={() => setSelectedLinkId(isSelected ? null : linkItem.id)}
-                    className={`rounded-2xl p-4 transition-all bg-white shadow-xs cursor-grab active:cursor-grabbing select-none flex flex-col justify-between border-2 ${
+                    className={`rounded-2xl p-4 transition-all parchment-deep shadow-2xs cursor-grab active:cursor-grabbing select-none flex flex-col justify-between border-2 ${
                       isSelected
-                        ? 'border-blue-600 ring-2 ring-blue-300 bg-blue-50/50 shadow-md scale-[1.02]'
-                        : 'border-slate-200 hover:border-blue-400 hover:shadow-sm hover:bg-slate-50/50'
+                        ? 'border-seal ring-2 ring-seal/40 bg-seal/10 shadow-parchment scale-[1.02]'
+                        : 'border-parchment-500/70 hover:border-brass hover:shadow-parchment'
                     }`}
                   >
                     <div className="flex items-start gap-2.5">
                       <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 mt-0.5 border ${
-                        isSelected ? 'bg-blue-600 text-white border-blue-600' : 'bg-amber-100 text-amber-900 border-amber-300'
+                        isSelected ? 'bg-seal text-parchment-100 border-seal' : 'bg-brass/20 text-brass border-brass/50'
                       }`}>
                         <Link2 className="w-3.5 h-3.5" />
                       </div>
-                      <p className="text-xs sm:text-sm text-slate-800 leading-relaxed font-semibold">
+                      <p className="text-xs sm:text-sm text-ink leading-relaxed font-semibold">
                         {linkItem.text}
                       </p>
                     </div>
@@ -275,14 +279,14 @@ export const CausalityChain: React.FC<CausalityChainProps> = () => {
             <div
               className={`p-2.5 sm:p-3 rounded-xl border text-xs sm:text-sm flex items-center gap-2.5 transition-all shadow-2xs ${
                 lastFeedback.type === 'correct'
-                  ? 'bg-emerald-50 text-emerald-950 border-emerald-300 font-bold'
-                  : 'bg-rose-50 text-rose-950 border-rose-300 font-medium'
+                  ? 'bg-[#eef0da] text-[#2f3a10] border-olive-seal/50 font-bold'
+                  : 'bg-[#f5e2de] text-seal-dark border-seal/50 font-medium'
               }`}
             >
               {lastFeedback.type === 'correct' ? (
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-olive-seal shrink-0" />
               ) : (
-                <XCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                <XCircle className="w-4 h-4 text-seal shrink-0" />
               )}
               <p className="leading-snug">
                 {lastFeedback.message}
@@ -295,6 +299,3 @@ export const CausalityChain: React.FC<CausalityChainProps> = () => {
     </div>
   );
 };
-
-
-

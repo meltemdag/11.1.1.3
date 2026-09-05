@@ -68,7 +68,7 @@ export const App: React.FC = () => {
   const completedCount = TREATIES.filter(t => progress[t.id]?.completed).length;
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-between">
+    <div className="min-h-screen flex flex-col justify-between">
       <div>
         <Header
           activeTab={activeTab}

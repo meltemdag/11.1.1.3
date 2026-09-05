@@ -8,29 +8,61 @@
     scroll-behavior: smooth;
   }
   body {
-    background-color: #f8fafc;
-    color: #0f172a;
+    /* Parşömen zemin: eskitilmiş kâğıt tonu + kenarlarda kararma (vinyet) + kâğıt dokusu */
+    background-color: #e9dcba;
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.09'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+      radial-gradient(ellipse at 50% 0%, rgba(251, 246, 233, 0.85) 0%, rgba(233, 220, 186, 0) 55%),
+      radial-gradient(ellipse at 50% 120%, rgba(111, 82, 40, 0.28) 0%, rgba(111, 82, 40, 0) 60%),
+      linear-gradient(180deg, #efe4c6 0%, #e6d7b2 45%, #d9c493 100%);
+    background-attachment: fixed;
+    color: #2b1d10;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+  ::selection {
+    background-color: #e8d5a4;
+    color: #5f1414;
   }
 }
 
-/* Özel kaydırma çubuğu */
+/* Eski kâğıt kart yüzeyi */
+@layer utilities {
+  .parchment-surface {
+    background-color: #f6efdc;
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.05'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .parchment-deep {
+    background-color: #ecdfc0;
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.07'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  /* Deri cilt hissi veren koyu yüzey (başlık çubuğu vb.) */
+  .leather-surface {
+    background-color: #2e1d10;
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.14'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+      linear-gradient(180deg, #3a2413 0%, #241507 100%);
+  }
+}
+
+/* Özel kaydırma çubuğu (pirinç tonlarda) */
 ::-webkit-scrollbar {
   width: 0.5rem;
   height: 0.5rem;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #ddc99b;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #a3762a;
   border-radius: 0.25rem;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #8f6c36;
 }
 
 /* Yumuşak geçişler */

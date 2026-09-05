@@ -2,15 +2,13 @@ import React, { useState } from 'react';
 import { TREATIES } from '../data/treaties';
 import { TreatyProgress } from '../types';
 import { 
-  CheckCircle2, 
-  RotateCcw, 
-  ArrowLeft
+  CheckCircle2 
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 interface TreatyComparisonProps {
   progress: TreatyProgress;
-  onReset: () => void;
+  onReset?: () => void;
   onGoToPrevTab?: () => void;
 }
 
@@ -44,7 +42,7 @@ const COMPARISON_DATA: ComparisonData[] = [
     title: 'Karlofça Antlaşması',
     year: 1699,
     badge: 'Savunmaya Geçiş',
-    badgeColor: 'bg-rose-100 text-rose-900 border-rose-200',
+    badgeColor: 'bg-[#f0dcd8] text-seal-dark border-[#cfa096]',
     foreignPolicy: {
       tag: 'Savunma Politikası',
       summary: 'Taarruz dönemi kapandı; sınırları koruma politikasına geçildi.'
@@ -67,7 +65,7 @@ const COMPARISON_DATA: ComparisonData[] = [
     title: 'Prut Antlaşması',
     year: 1711,
     badge: 'Kayıpları Telafi Umudu',
-    badgeColor: 'bg-amber-100 text-amber-900 border-amber-200',
+    badgeColor: 'bg-[#f2e7c9] text-parchment-800 border-[#cdb37a]',
     foreignPolicy: {
       tag: 'Kayıpları Telafi',
       summary: 'Kaybedilen yerleri geri alma inancı ve cesareti güçlendi.'
@@ -90,7 +88,7 @@ const COMPARISON_DATA: ComparisonData[] = [
     title: 'Pasarofça Antlaşması',
     year: 1718,
     badge: 'Batı Üstünlüğü & Lale Devri',
-    badgeColor: 'bg-indigo-100 text-indigo-900 border-indigo-200',
+    badgeColor: 'bg-[#e2e2ec] text-[#3b3f63] border-[#a9aecb]',
     foreignPolicy: {
       tag: 'Barış ve Islahat',
       summary: 'Geri alma ümidi bitti; barış ve Batı tarzı ıslahatlar başladı.'
@@ -113,7 +111,7 @@ const COMPARISON_DATA: ComparisonData[] = [
     title: 'Belgrad Antlaşması',
     year: 1739,
     badge: 'Son Kazançlı Antlaşma',
-    badgeColor: 'bg-emerald-100 text-emerald-900 border-emerald-200',
+    badgeColor: 'bg-[#e9edda] text-[#3c4a1d] border-[#b3bd8e]',
     foreignPolicy: {
       tag: 'Askeri Islahat Başarısı',
       summary: 'Askeri ıslahatlar sayesinde iki cepheli savaş kazanıldı.'
@@ -136,7 +134,7 @@ const COMPARISON_DATA: ComparisonData[] = [
     title: 'Küçük Kaynarca Antlaşması',
     year: 1774,
     badge: 'En Ağır Kırılma Noktası',
-    badgeColor: 'bg-red-100 text-red-950 border-red-300',
+    badgeColor: 'bg-[#efd9d6] text-[#5f1414] border-[#c9948d]',
     foreignPolicy: {
       tag: 'Varlık Mücadelesi',
       summary: 'Uzun rehavet sonucu tarihin en ağır yenilgilerinden biri alındı.'
@@ -156,7 +154,7 @@ const COMPARISON_DATA: ComparisonData[] = [
   }
 ];
 
-export const TreatyComparison: React.FC<TreatyComparisonProps> = ({ progress, onReset, onGoToPrevTab }) => {
+export const TreatyComparison: React.FC<TreatyComparisonProps> = ({ progress }) => {
   const [finished, setFinished] = useState<boolean>(false);
 
   const completedTreatiesCount = TREATIES.filter(t => progress[t.id]?.completed).length;
@@ -182,39 +180,26 @@ export const TreatyComparison: React.FC<TreatyComparisonProps> = ({ progress, on
     }
   };
 
-  const handleRestart = () => {
-    onReset();
-    setFinished(false);
-    try {
-      const win = window as any;
-      if (win.SCORM_API_WRAPPER && typeof win.SCORM_API_WRAPPER.setCompleted === 'function') {
-        win.SCORM_API_WRAPPER.setCompleted();
-      }
-    } catch {
-      // Sessiz hata yönetimi
-    }
-  };
-
   return (
     <div className="space-y-4">
       {/* Açıklama ve Yönlendirme Metni */}
-      <div className="bg-white rounded-xl border border-slate-200 p-3.5 sm:p-4 text-xs sm:text-sm text-slate-700 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+      <div className="parchment-surface rounded-xl border-2 border-parchment-400/70 p-3.5 sm:p-4 text-xs sm:text-sm text-ink-light shadow-parchment flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
         <p>
           17-18. yüzyıl boyunca imzalanan antlaşmaları dış politika, Karadeniz hakimiyeti, diplomasi ve dönüm noktaları üzerinden karşılaştırınız.
         </p>
-        <span className="text-xs font-semibold text-slate-600 bg-slate-100 px-3 py-1 rounded-full shrink-0 border border-slate-200">
+        <span className="text-xs font-semibold text-ink-light parchment-deep px-3 py-1 rounded-full shrink-0 border border-brass/50">
           {completedTreatiesCount} / {TREATIES.length} Tamamlandı
         </span>
       </div>
 
       {finished && (
-        <div className="bg-emerald-50 border border-emerald-300 rounded-xl p-4 sm:p-5 flex items-center gap-3 text-emerald-950 shadow-sm animate-fade-in">
-          <div className="w-9 h-9 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+        <div className="bg-[#eef0da] border-2 border-olive-seal/50 rounded-xl p-4 sm:p-5 flex items-center gap-3 text-[#2f3a10] shadow-parchment animate-fade-in">
+          <div className="w-9 h-9 rounded-full bg-olive-seal text-parchment-100 flex items-center justify-center shrink-0 shadow-wax">
             <CheckCircle2 className="w-5 h-5" />
           </div>
           <div>
-            <h4 className="font-bold text-sm sm:text-base">Etkinlik Başarıyla Tamamlandı</h4>
-            <p className="text-xs sm:text-sm text-emerald-800 mt-0.5">
+            <h4 className="font-antique font-bold text-sm sm:text-base">Etkinlik Başarıyla Tamamlandı</h4>
+            <p className="text-xs sm:text-sm text-[#4a5423] mt-0.5">
               17-18. Yüzyıl Osmanlı Diplomasisi analizini, neden-sonuç sınıflandırmalarını ve antlaşma kronolojisini eksiksiz tamamladınız.
             </p>
           </div>
@@ -231,48 +216,48 @@ export const TreatyComparison: React.FC<TreatyComparisonProps> = ({ progress, on
             itemBg: string;
           }> = {
             karlofca: {
-              cardBg: 'bg-rose-50/70 border-rose-200/90',
-              yearBadge: 'bg-white text-rose-950 border-rose-200',
-              headerBorder: 'border-rose-200/70',
-              itemBg: 'bg-white/90 border-rose-100/90'
+              cardBg: 'bg-[#f1e3df]/80 border-[#cfa096]',
+              yearBadge: 'bg-parchment-50 text-seal-dark border-[#cfa096]',
+              headerBorder: 'border-[#cfa096]/60',
+              itemBg: 'bg-parchment-50/90 border-[#dcc0b8]'
             },
             prut: {
-              cardBg: 'bg-amber-50/75 border-amber-200/90',
-              yearBadge: 'bg-white text-amber-950 border-amber-200',
-              headerBorder: 'border-amber-200/70',
-              itemBg: 'bg-white/90 border-amber-100/90'
+              cardBg: 'bg-[#f1e7cc]/80 border-[#cdb37a]',
+              yearBadge: 'bg-parchment-50 text-parchment-800 border-[#cdb37a]',
+              headerBorder: 'border-[#cdb37a]/60',
+              itemBg: 'bg-parchment-50/90 border-[#ddcfa4]'
             },
             pasarofca: {
-              cardBg: 'bg-indigo-50/70 border-indigo-200/90',
-              yearBadge: 'bg-white text-indigo-950 border-indigo-200',
-              headerBorder: 'border-indigo-200/70',
-              itemBg: 'bg-white/90 border-indigo-100/90'
+              cardBg: 'bg-[#e5e5ee]/80 border-[#a9aecb]',
+              yearBadge: 'bg-parchment-50 text-[#3b3f63] border-[#a9aecb]',
+              headerBorder: 'border-[#a9aecb]/60',
+              itemBg: 'bg-parchment-50/90 border-[#c4c6d8]'
             },
             belgrad: {
-              cardBg: 'bg-emerald-50/70 border-emerald-200/90',
-              yearBadge: 'bg-white text-emerald-950 border-emerald-200',
-              headerBorder: 'border-emerald-200/70',
-              itemBg: 'bg-white/90 border-emerald-100/90'
+              cardBg: 'bg-[#eaeddb]/80 border-[#b3bd8e]',
+              yearBadge: 'bg-parchment-50 text-[#3c4a1d] border-[#b3bd8e]',
+              headerBorder: 'border-[#b3bd8e]/60',
+              itemBg: 'bg-parchment-50/90 border-[#ccd3ab]'
             },
             kucuk_kaynarca: {
-              cardBg: 'bg-red-50/70 border-red-200/90',
-              yearBadge: 'bg-white text-red-950 border-red-200',
-              headerBorder: 'border-red-200/70',
-              itemBg: 'bg-white/90 border-red-100/90'
+              cardBg: 'bg-[#f0dedb]/80 border-[#c9948d]',
+              yearBadge: 'bg-parchment-50 text-[#5f1414] border-[#c9948d]',
+              headerBorder: 'border-[#c9948d]/60',
+              itemBg: 'bg-parchment-50/90 border-[#dcb8b2]'
             }
           };
 
           const theme = themes[item.treatyId] || {
-            cardBg: 'bg-white border-slate-200',
-            yearBadge: 'bg-white text-slate-900 border-slate-200',
-            headerBorder: 'border-slate-100',
-            itemBg: 'bg-slate-50 border-slate-100'
+            cardBg: 'parchment-surface border-parchment-400',
+            yearBadge: 'bg-parchment-50 text-ink border-parchment-400',
+            headerBorder: 'border-parchment-300',
+            itemBg: 'parchment-deep border-parchment-300'
           };
 
           return (
             <div
               key={item.treatyId}
-              className={`${theme.cardBg} rounded-2xl border p-4 shadow-xs flex flex-col justify-between space-y-3.5 hover:shadow-sm transition-all`}
+              className={`${theme.cardBg} rounded-2xl border-2 p-4 shadow-parchment flex flex-col justify-between space-y-3.5 hover:shadow-parchment-lg transition-all`}
             >
               {/* Kart Başlığı */}
               <div className={`border-b ${theme.headerBorder} pb-3 space-y-1.5`}>
@@ -281,7 +266,7 @@ export const TreatyComparison: React.FC<TreatyComparisonProps> = ({ progress, on
                     {item.year}
                   </span>
                 </div>
-                <h3 className="text-sm font-bold text-slate-900 leading-tight">
+                <h3 className="font-antique text-sm font-bold text-ink leading-tight">
                   {item.title}
                 </h3>
                 <div className={`text-[10.5px] font-semibold px-2 py-0.5 rounded border inline-block ${item.badgeColor}`}>
@@ -293,28 +278,28 @@ export const TreatyComparison: React.FC<TreatyComparisonProps> = ({ progress, on
               <div className="space-y-2 text-xs grow">
                 {/* Dış Politika Boyutu */}
                 <div className={`rounded-xl p-2.5 ${theme.itemBg} border shadow-2xs`}>
-                  <p className="text-[11.5px] text-slate-700 leading-relaxed">
+                  <p className="text-[11.5px] text-ink-light leading-relaxed">
                     {item.foreignPolicy.summary}
                   </p>
                 </div>
 
                 {/* Karadeniz Boyutu */}
                 <div className={`rounded-xl p-2.5 ${theme.itemBg} border shadow-2xs`}>
-                  <p className="text-[11.5px] text-slate-700 leading-relaxed">
+                  <p className="text-[11.5px] text-ink-light leading-relaxed">
                     {item.blackSea.summary}
                   </p>
                 </div>
 
                 {/* Diplomasi & Arabuluculuk Boyutu */}
                 <div className={`rounded-xl p-2.5 ${theme.itemBg} border shadow-2xs`}>
-                  <p className="text-[11.5px] text-slate-700 leading-relaxed">
+                  <p className="text-[11.5px] text-ink-light leading-relaxed">
                     {item.diplomacy.summary}
                   </p>
                 </div>
 
                 {/* İlkler & Kırılmalar Boyutu */}
                 <div className={`rounded-xl p-2.5 ${theme.itemBg} border shadow-2xs`}>
-                  <p className="text-[11.5px] text-slate-700 leading-relaxed">
+                  <p className="text-[11.5px] text-ink-light leading-relaxed">
                     {item.breakthroughs.summary}
                   </p>
                 </div>
@@ -325,30 +310,10 @@ export const TreatyComparison: React.FC<TreatyComparisonProps> = ({ progress, on
       </div>
 
       {/* Alt Eylem ve Tamamlama Paneli */}
-      <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          {onGoToPrevTab && (
-            <button
-              onClick={onGoToPrevTab}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-100 border border-slate-200 transition-colors cursor-pointer"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Antlaşma Kronolojisine Dön</span>
-            </button>
-          )}
-
-          <button
-            onClick={handleRestart}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
-          >
-            <RotateCcw className="w-3.5 h-3.5" />
-            <span>Etkinliği Baştan Başlat</span>
-          </button>
-        </div>
-
+      <div className="parchment-surface rounded-xl border-2 border-parchment-400/70 p-4 sm:p-5 shadow-parchment flex items-center justify-end">
         <button
           onClick={handleFinish}
-          className="flex items-center gap-2 px-6 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs sm:text-sm font-bold shadow-sm transition-all cursor-pointer"
+          className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-b from-seal-light to-seal hover:from-seal hover:to-seal-dark text-parchment-100 rounded-xl text-xs sm:text-sm font-bold shadow-wax transition-all cursor-pointer border border-brass/50"
         >
           <CheckCircle2 className="w-4 h-4" />
           <span>Etkinliği Bitir</span>
