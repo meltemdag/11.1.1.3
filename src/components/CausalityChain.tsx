@@ -91,6 +91,16 @@ const CHAIN_ITEMS: ChainItem[] = [
   }
 ];
 
+// Fisher-Yates karıştırma algoritması
+function shuffleArray<T>(array: T[]): T[] {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
 export const CausalityChain: React.FC<CausalityChainProps> = ({ onGoToSummary }) => {
   const [placed, setPlaced] = useState<{ [slotKey: string]: string }>({});
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
@@ -100,16 +110,23 @@ export const CausalityChain: React.FC<CausalityChainProps> = ({ onGoToSummary })
     message: string;
   }>({ type: null, message: '' });
 
+  // Havuzdaki halkaların rastgele karıştırılmış ID sırası
+  const [shuffledChainIds, setShuffledChainIds] = useState<string[]>(() =>
+    shuffleArray(CHAIN_ITEMS.map(i => i.id))
+  );
+
   const isChainCompleted = Object.keys(placed).length === CHAIN_ITEMS.length;
 
   const slotKey = (treatyId: TreatyId, type: 'cause' | 'effect') => `${treatyId}::${type}`;
 
-  // Havuzda kalan yerleştirilmemiş halkalar (karışık sırada)
+  // Havuzda kalan yerleştirilmemiş halkalar (her zaman rastgele karıştırılmış sırada)
   const unplacedItems = useMemo(() => {
     const placedValues = new Set(Object.values(placed));
-    const remaining = CHAIN_ITEMS.filter(item => !placedValues.has(item.id));
-    return [...remaining].sort((a, b) => b.id.localeCompare(a.id));
-  }, [placed]);
+    return shuffledChainIds
+      .filter(id => !placedValues.has(id))
+      .map(id => CHAIN_ITEMS.find(item => item.id === id))
+      .filter((item): item is ChainItem => item !== undefined);
+  }, [placed, shuffledChainIds]);
 
   const handlePlaceItem = (item: ChainItem, targetTreaty: TreatyId, targetType: 'cause' | 'effect') => {
     const isCorrect = item.treatyId === targetTreaty && item.type === targetType;
@@ -140,6 +157,7 @@ export const CausalityChain: React.FC<CausalityChainProps> = ({ onGoToSummary })
     setPlaced({});
     setSelectedItemId(null);
     setLastFeedback({ type: null, message: '' });
+    setShuffledChainIds(shuffleArray(CHAIN_ITEMS.map(i => i.id)));
   };
 
   // Drag & drop

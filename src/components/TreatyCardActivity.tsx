@@ -35,12 +35,25 @@ export const TreatyCardActivity: React.FC<TreatyCardActivityProps> = ({
   const completedCount = TREATIES.filter(t => progress[t.id]?.completed).length;
   const allCompleted = completedCount === TREATIES.length;
 
+// Fisher-Yates karıştırma algoritması
+function shuffleArray<T>(array: T[]): T[] {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
   // Kullanıcının yerleştirdiği maddeler
   const [placedCauses, setPlacedCauses] = useState<string[]>([]);
   const [placedEffects, setPlacedEffects] = useState<string[]>([]);
 
   // Dokunmatik cihazlar için seçili kart durumu
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
+
+  // Maddelerin rastgele karıştırılmış ID sırası
+  const [shuffledItemIds, setShuffledItemIds] = useState<string[]>([]);
 
   // Geri bildirim mesajı ve son deneme durumu
   const [lastFeedback, setLastFeedback] = useState<{
@@ -71,19 +84,21 @@ export const TreatyCardActivity: React.FC<TreatyCardActivityProps> = ({
     }
     setSelectedCardId(null);
     setLastFeedback({ type: null, message: '' });
+    // Maddeleri rastgele karıştır (asla aynı sırada olmasın)
+    setShuffledItemIds(shuffleArray(treaty.items.map(item => item.id)));
   }, [treaty.id]);
 
-  // Seçenekleri karıştırma: Başlangıçta hedef alanlarla eşleşmeyecek ve tahmin ettirmeyecek asimetrik düzen
+  // Seçenekleri karıştırma: Her açılışta rastgele karıştırılmış sırada sunulur
   const unplacedItems = useMemo(() => {
     const placedSet = new Set([...placedCauses, ...placedEffects]);
-    const remaining = treaty.items.filter(item => !placedSet.has(item.id));
-
-    // Asimetrik karıştırma: Neden ve sonuçları dönüşümlü ve ters sırada dizecek deterministik/kontrollü yapı
-    return [...remaining].sort((a, b) => {
-      // id hash veya ters sıralama ile yapay hizayı engelleme
-      return a.id.localeCompare(b.id) * -1;
-    });
-  }, [treaty.items, placedCauses, placedEffects]);
+    const remainingIds = shuffledItemIds.filter(id => !placedSet.has(id));
+    if (remainingIds.length === 0 && treaty.items.length > placedSet.size) {
+      return shuffleArray(treaty.items.filter(item => !placedSet.has(item.id)));
+    }
+    return remainingIds
+      .map(id => treaty.items.find(item => item.id === id))
+      .filter((item): item is TreatyItem => item !== undefined);
+  }, [treaty.items, placedCauses, placedEffects, shuffledItemIds]);
 
   // Bir maddenin yerleştirilmesi işlemi
   const handlePlaceItem = (item: TreatyItem, target: 'cause' | 'effect') => {
