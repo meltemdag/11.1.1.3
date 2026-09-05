@@ -7,6 +7,7 @@ export interface TreatyItem {
   text: string;
   type: ItemType;
   explanation: string; // Neden doğru sınıflandırma olduğuna dair pedagojik açıklama
+  guidingHint?: string; // Hatalı yerleştirmede gösterilecek kısa yönlendirici ipucu
 }
 
 export interface CausalityConnection {

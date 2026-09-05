@@ -39,7 +39,7 @@ export const MapExplorer: React.FC<MapExplorerProps> = ({ progress, onSelectTrea
       {/* Açıklama ve Yönlendirme Metni */}
       <div className="parchment-surface rounded-xl border-2 border-parchment-400/70 p-3.5 sm:p-4 mb-4 text-xs sm:text-sm text-ink-light shadow-parchment flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <p className="leading-relaxed">
-          1699-1774 yılları arasında Osmanlı Devleti'nin imzaladığı antlaşmaları harita üzerindeki merkezleri seçerek inceleyiniz; dönemin diplomatik ilişkilerini, imzacı taraflarını ve kritik kararlarını değerlendiriniz.
+          Harita üzerindeki merkezleri seçerek antlaşmaları inceleyiniz; sonraki aşamaya geçebilmek için tüm merkezlerin neden ve sonuç sınıflandırmalarını tamamlayınız.
         </p>
         {allCompleted && onGoToChain && (
           <button
@@ -73,55 +73,72 @@ export const MapExplorer: React.FC<MapExplorerProps> = ({ progress, onSelectTrea
               return (
                 <button
                   key={treaty.id}
-                  onClick={() => setSelectedId(treaty.id)}
+                  onClick={() => {
+                    if (selectedId === treaty.id) {
+                      onSelectTreaty(treaty.id);
+                    } else {
+                      setSelectedId(treaty.id);
+                    }
+                  }}
                   onMouseEnter={() => setHoveredId(treaty.id)}
                   onMouseLeave={() => setHoveredId(null)}
                   style={{
                     left: `${treaty.mapCoords.x}%`,
                     top: `${treaty.mapCoords.y}%`,
+                    transform: 'translate(-44%, -72%)'
                   }}
-                  className={`absolute -translate-x-1/2 -translate-y-1/2 group/pin focus:outline-none transition-transform cursor-pointer ${
-                    isSelected ? 'scale-110 z-30' : isHovered ? 'scale-110 z-40' : 'hover:scale-110 hover:z-40 z-20'
+                  className={`absolute group/pin focus:outline-none cursor-pointer ${
+                    isSelected ? 'z-40' : isHovered ? 'z-50' : 'z-20'
                   }`}
                   aria-label={`${treaty.title} durağı`}
                 >
-                  {/* Nabız Halka Efekti */}
-                  <span
-                    className={`absolute -inset-1.5 rounded-full opacity-75 animate-ping-slow ${
-                      isSelected ? 'bg-seal-light' : isCompleted ? 'bg-olive-seal' : 'bg-brass-light'
+                  {/* Açılmamış / Neden-Sonucu Tamamlanmamış Pinler İçin Sıcak Akkor Işık (Ampul Işığı) Efekti */}
+                  {!isCompleted && (
+                    <>
+                      {/* Dışa doğru süzülen yumuşak akkor ışık dalgası */}
+                      <span className="absolute left-[44%] top-[72%] w-8 h-8 rounded-full bg-[#fef08a]/35 animate-warm-light-wave pointer-events-none blur-[1px]" />
+                      {/* Mührün merkezinde yanan yumuşak akkor lamba aurası */}
+                      <span className="absolute left-[44%] top-[72%] -translate-x-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-[#fffdf0]/90 animate-warm-light pointer-events-none" />
+                    </>
+                  )}
+
+                  {/* Gerçekçi Mühür Pin Görseli:
+                      - Pin ve iğne tamamen sabittir, hareket etmez
+                      - Henüz neden-sonucu yapılmamışsa: Kırmızı (pin.webp)
+                      - Neden-sonucu açılıp tamamlanmışsa: Yeşil (pin_visit.webp)
+                  */}
+                  <img
+                    src={isCompleted ? './pin_visit.webp' : './pin.webp'}
+                    alt={`${treaty.title} pini`}
+                    className={`w-9 h-9 sm:w-11 sm:h-11 object-contain pointer-events-none select-none ${
+                      isCompleted
+                        ? 'drop-shadow-[0_4px_8px_rgba(47,58,16,0.6)]'
+                        : isSelected
+                        ? 'drop-shadow-[0_5px_10px_rgba(0,0,0,0.6)] drop-shadow-[0_0_8px_rgba(254,240,138,0.7)]'
+                        : 'drop-shadow-[0_4px_8px_rgba(124,29,29,0.5)]'
                     }`}
                   />
 
-                  {/* Pin Gövdesi (balmumu mühür) */}
-                  <div
-                    className={`relative flex items-center justify-center w-6 h-6 rounded-full shadow-wax border-2 text-parchment-100 font-bold text-xs transition-colors ${
-                      isSelected
-                        ? 'bg-gradient-to-b from-seal-light to-seal-dark border-brass-pale ring-2 ring-brass-light'
-                        : isCompleted
-                        ? 'bg-olive-seal border-parchment-100'
-                        : 'bg-ink border-parchment-200 hover:bg-ink-light'
-                    }`}
-                  >
-                    {isCompleted ? (
-                      <CheckCircle2 className="w-3.5 h-3.5 text-parchment-100" />
-                    ) : (
-                      <MapPin className="w-3.5 h-3.5 text-parchment-100" />
-                    )}
-                  </div>
-
                   {/* Etiket (Tıklandığında veya Mouse ile Üzerine Gelindiğinde Görünür) */}
                   <div
-                    className={`absolute left-1/2 -translate-x-1/2 whitespace-nowrap px-2.5 py-1 rounded-md text-[11px] font-medium shadow-parchment pointer-events-none z-50 transition-all duration-150 border ${
+                    className={`absolute left-[44%] -translate-x-1/2 whitespace-nowrap px-2.5 py-1 rounded-md text-[11px] font-medium shadow-parchment pointer-events-none z-50 transition-all duration-150 border ${
                       isSelected
                         ? 'bg-ink/95 text-brass-pale border-brass/60 opacity-100 visible scale-100'
                         : isHovered
                         ? 'bg-ink/95 text-parchment-100 border-brass/40 opacity-100 visible scale-100'
                         : 'bg-ink/95 text-parchment-100 border-brass/40 opacity-0 invisible scale-95 group-hover/pin:opacity-100 group-hover/pin:visible group-hover/pin:scale-100'
                     } ${
-                      treaty.id === 'belgrad' || treaty.id === 'pasarofca' ? 'bottom-full mb-1.5' : 'top-full mt-1.5'
+                      treaty.id === 'belgrad' || treaty.id === 'pasarofca' ? 'bottom-full mb-1' : 'top-full mt-1'
                     }`}
                   >
-                    {treaty.title} ({treaty.year})
+                    <span className="flex items-center gap-1.5">
+                      {isCompleted ? (
+                        <CheckCircle2 className="w-3 h-3 text-olive-seal" />
+                      ) : (
+                        <span className="w-2 h-2 rounded-full bg-amber-100 shadow-[0_0_6px_#fef08a] animate-pulse shrink-0" />
+                      )}
+                      <span>{treaty.title} ({treaty.year})</span>
+                    </span>
                   </div>
                 </button>
               );

@@ -4,10 +4,8 @@ import { TreatyId, TreatyItem, TreatyProgress } from '../types';
 import {
   CheckCircle2,
   XCircle,
-  RotateCcw,
   ArrowLeft,
-  ArrowRight,
-  X
+  ArrowRight
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -117,23 +115,16 @@ export const TreatyCardActivity: React.FC<TreatyCardActivityProps> = ({
         onUpdateProgress(treaty.id, newCauses, newEffects, false);
       }
     } else {
-      // Düşünelim / İpucu yönlendirmesi (Doğrudan cevap vermeden düşünmeye teşvik eden yapı)
+      // Düşünelim yönlendirmesi (Karta özel, cevabı doğrudan vermeden düşündüren kısa yönlendirme)
       setLastFeedback({
         type: 'wrong',
-        message: target === 'cause'
-          ? 'Bu gelişmenin antlaşmadan önce süreci hazırlayan bir etken mi, yoksa antlaşmanın ardından ortaya çıkan bir durum mu olduğunu değerlendiriniz.'
-          : 'Bu gelişmenin antlaşmanın ardından ortaya çıkan bir durum mu, yoksa antlaşmaya zemin hazırlayan bir etken mi olduğunu değerlendiriniz.'
+        message: item.guidingHint || (
+          target === 'cause'
+            ? 'Bu gelişmenin antlaşmaya zemin mi hazırladığını değerlendiriniz.'
+            : 'Bu gelişmenin antlaşmanın ardından ortaya çıkan bir durum mu olduğunu değerlendiriniz.'
+        )
       });
     }
-  };
-
-  // Bu antlaşmayı baştan deneme
-  const handleResetCurrent = () => {
-    setPlacedCauses([]);
-    setPlacedEffects([]);
-    setSelectedCardId(null);
-    setLastFeedback({ type: null, message: '' });
-    onUpdateProgress(treaty.id, [], [], false);
   };
 
   // HTML5 Drag & Drop işlemleri
@@ -236,30 +227,15 @@ export const TreatyCardActivity: React.FC<TreatyCardActivityProps> = ({
               {treaty.year}
             </span>
           </div>
-          <button
-            onClick={onClose || onGoToPrevTab}
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-ink-soft hover:text-ink hover:bg-parchment-300 transition-colors cursor-pointer"
-            title="Haritaya Dön"
-            aria-label="Kapat"
-          >
-            <X className="w-5 h-5" />
-          </button>
         </div>
 
         {/* Modal Gövdesi (Kaydırılabilir İçerik) */}
         <div className="overflow-y-auto flex-1 p-4 sm:p-6 space-y-5 scrollbar-thin">
           {/* Görev Açıklaması */}
-          <div className="parchment-deep px-4 sm:px-5 py-3 rounded-xl border border-parchment-400/70 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs sm:text-sm text-ink-light">
-            <p>
+          <div className="parchment-deep px-4 sm:px-5 py-3 rounded-xl border border-parchment-400/70 text-xs sm:text-sm text-ink-light">
+            <p className="leading-relaxed">
               Antlaşmaya ait gelişmeleri inceleyiniz; olayları antlaşmaya yol açan nedenler ve antlaşma sonrasında ortaya çıkan sonuçlar olarak ilgili panolara yerleştiriniz.
             </p>
-            <button
-              onClick={handleResetCurrent}
-              className="flex items-center gap-1 text-xs text-ink-soft hover:text-ink px-2 py-1 rounded hover:bg-parchment-300 transition-colors shrink-0 cursor-pointer"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              <span>Kartı Temizle</span>
-            </button>
           </div>
 
           {/* Geri Bildirim Şeridi */}

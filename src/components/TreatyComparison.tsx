@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { TreatyProgress } from '../types';
 import { 
-  CheckCircle2 
+  CheckCircle2,
+  RotateCcw
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 interface TreatyComparisonProps {
   progress: TreatyProgress;
   onReset?: () => void;
+  onRestart?: () => void;
   onGoToPrevTab?: () => void;
 }
 
@@ -153,17 +155,14 @@ const COMPARISON_DATA: ComparisonData[] = [
   }
 ];
 
-export const TreatyComparison: React.FC<TreatyComparisonProps> = () => {
+export const TreatyComparison: React.FC<TreatyComparisonProps> = ({
+  onReset,
+  onRestart
+}) => {
   const [finished, setFinished] = useState<boolean>(false);
+  const [isTerminated, setIsTerminated] = useState<boolean>(false);
 
-  const handleFinish = () => {
-    setFinished(true);
-    confetti({
-      particleCount: 100,
-      spread: 90,
-      origin: { y: 0.6 }
-    });
-
+  const notifyScormCompleted = () => {
     try {
       const win = window as any;
       if (win.SCORM_API_WRAPPER && typeof win.SCORM_API_WRAPPER.setCompleted === 'function') {
@@ -173,8 +172,29 @@ export const TreatyComparison: React.FC<TreatyComparisonProps> = () => {
         win.pipwerks.SCORM.save();
       }
     } catch {
-      // Sessiz hata yönetimi
+      // Sessiz hata yönetimi (konsola log eklenmez)
     }
+  };
+
+  const handleFinish = () => {
+    setFinished(true);
+    confetti({
+      particleCount: 100,
+      spread: 90,
+      origin: { y: 0.6 }
+    });
+    notifyScormCompleted();
+    try {
+      window.close();
+    } catch {
+      // sessiz
+    }
+    setIsTerminated(true);
+  };
+
+  const handleRestart = () => {
+    notifyScormCompleted();
+    (onRestart || onReset)?.();
   };
 
   return (
@@ -210,34 +230,34 @@ export const TreatyComparison: React.FC<TreatyComparisonProps> = () => {
             itemBg: string;
           }> = {
             karlofca: {
-              cardBg: 'bg-[#f1e3df]/80 border-[#cfa096]',
-              yearBadge: 'bg-parchment-50 text-seal-dark border-[#cfa096]',
-              headerBorder: 'border-[#cfa096]/60',
-              itemBg: 'bg-parchment-50/90 border-[#dcc0b8]'
+              cardBg: 'bg-[#ecdcd7] border-[#c49287]',
+              yearBadge: 'bg-parchment-50 text-seal-dark border-[#c49287]',
+              headerBorder: 'border-[#c49287]/60',
+              itemBg: 'bg-[#fbf7f6] border-[#dcbbb4]'
             },
             prut: {
-              cardBg: 'bg-[#f1e7cc]/80 border-[#cdb37a]',
-              yearBadge: 'bg-parchment-50 text-parchment-800 border-[#cdb37a]',
-              headerBorder: 'border-[#cdb37a]/60',
-              itemBg: 'bg-parchment-50/90 border-[#ddcfa4]'
+              cardBg: 'bg-[#eee1be] border-[#c4a665]',
+              yearBadge: 'bg-parchment-50 text-parchment-800 border-[#c4a665]',
+              headerBorder: 'border-[#c4a665]/60',
+              itemBg: 'bg-[#fcfaf4] border-[#d8c593]'
             },
             pasarofca: {
-              cardBg: 'bg-[#e5e5ee]/80 border-[#a9aecb]',
-              yearBadge: 'bg-parchment-50 text-[#3b3f63] border-[#a9aecb]',
-              headerBorder: 'border-[#a9aecb]/60',
-              itemBg: 'bg-parchment-50/90 border-[#c4c6d8]'
+              cardBg: 'bg-[#dddde8] border-[#9ba1c2]',
+              yearBadge: 'bg-parchment-50 text-[#323657] border-[#9ba1c2]',
+              headerBorder: 'border-[#9ba1c2]/60',
+              itemBg: 'bg-[#f8f8fb] border-[#bec2d6]'
             },
             belgrad: {
-              cardBg: 'bg-[#eaeddb]/80 border-[#b3bd8e]',
-              yearBadge: 'bg-parchment-50 text-[#3c4a1d] border-[#b3bd8e]',
-              headerBorder: 'border-[#b3bd8e]/60',
-              itemBg: 'bg-parchment-50/90 border-[#ccd3ab]'
+              cardBg: 'bg-[#e2e7ce] border-[#a5b279]',
+              yearBadge: 'bg-parchment-50 text-[#2f3d13] border-[#a5b279]',
+              headerBorder: 'border-[#a5b279]/60',
+              itemBg: 'bg-[#fafbf6] border-[#c4cc9f]'
             },
             kucuk_kaynarca: {
-              cardBg: 'bg-[#f0dedb]/80 border-[#c9948d]',
-              yearBadge: 'bg-parchment-50 text-[#5f1414] border-[#c9948d]',
-              headerBorder: 'border-[#c9948d]/60',
-              itemBg: 'bg-parchment-50/90 border-[#dcb8b2]'
+              cardBg: 'bg-[#ebd1cd] border-[#ba7f77]',
+              yearBadge: 'bg-parchment-50 text-[#540f0f] border-[#ba7f77]',
+              headerBorder: 'border-[#ba7f77]/60',
+              itemBg: 'bg-[#fbf5f4] border-[#d6a9a3]'
             }
           };
 
@@ -251,10 +271,10 @@ export const TreatyComparison: React.FC<TreatyComparisonProps> = () => {
           return (
             <div
               key={item.treatyId}
-              className={`${theme.cardBg} rounded-2xl border-2 p-4 shadow-parchment flex flex-col justify-between space-y-3.5 hover:shadow-parchment-lg transition-all`}
+              className={`${theme.cardBg} rounded-2xl border-2 p-4 shadow-parchment flex flex-col justify-between space-y-3 hover:shadow-parchment-lg transition-all`}
             >
               {/* Kart Başlığı */}
-              <div className={`border-b ${theme.headerBorder} pb-3 space-y-1.5`}>
+              <div className={`border-b ${theme.headerBorder} pb-2.5 space-y-1.5`}>
                 <div>
                   <span className={`text-xs font-mono font-extrabold px-2 py-0.5 rounded border shadow-2xs ${theme.yearBadge}`}>
                     {item.year}
@@ -269,31 +289,31 @@ export const TreatyComparison: React.FC<TreatyComparisonProps> = () => {
               </div>
 
               {/* Karşılaştırma Maddeleri */}
-              <div className="space-y-2 text-xs grow">
+              <div className="space-y-2.5 text-xs grow">
                 {/* Dış Politika Boyutu */}
-                <div className={`rounded-xl p-2.5 ${theme.itemBg} border shadow-2xs`}>
-                  <p className="text-[11.5px] text-ink-light leading-relaxed">
+                <div className={`rounded-xl py-2.5 px-3 ${theme.itemBg} border shadow-2xs`}>
+                  <p className="text-[12px] text-ink-light leading-relaxed">
                     {item.foreignPolicy.summary}
                   </p>
                 </div>
 
                 {/* Karadeniz Boyutu */}
-                <div className={`rounded-xl p-2.5 ${theme.itemBg} border shadow-2xs`}>
-                  <p className="text-[11.5px] text-ink-light leading-relaxed">
+                <div className={`rounded-xl py-2.5 px-3 ${theme.itemBg} border shadow-2xs`}>
+                  <p className="text-[12px] text-ink-light leading-relaxed">
                     {item.blackSea.summary}
                   </p>
                 </div>
 
                 {/* Diplomasi ve Arabuluculuk Boyutu */}
-                <div className={`rounded-xl p-2.5 ${theme.itemBg} border shadow-2xs`}>
-                  <p className="text-[11.5px] text-ink-light leading-relaxed">
+                <div className={`rounded-xl py-2.5 px-3 ${theme.itemBg} border shadow-2xs`}>
+                  <p className="text-[12px] text-ink-light leading-relaxed">
                     {item.diplomacy.summary}
                   </p>
                 </div>
 
                 {/* İlkler ve Kırılmalar Boyutu */}
-                <div className={`rounded-xl p-2.5 ${theme.itemBg} border shadow-2xs`}>
-                  <p className="text-[11.5px] text-ink-light leading-relaxed">
+                <div className={`rounded-xl py-2.5 px-3 ${theme.itemBg} border shadow-2xs`}>
+                  <p className="text-[12px] text-ink-light leading-relaxed">
                     {item.breakthroughs.summary}
                   </p>
                 </div>
@@ -304,15 +324,48 @@ export const TreatyComparison: React.FC<TreatyComparisonProps> = () => {
       </div>
 
       {/* Alt Eylem ve Tamamlama Paneli */}
-      <div className="parchment-surface rounded-xl border-2 border-parchment-400/70 p-4 sm:p-5 shadow-parchment flex items-center justify-end">
+      <div className="parchment-surface rounded-xl border-2 border-parchment-400/70 p-4 sm:p-5 shadow-parchment flex flex-col sm:flex-row items-center justify-end gap-3">
+        <button
+          onClick={handleRestart}
+          className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-b from-parchment-200 to-parchment-300 hover:from-parchment-300 hover:to-parchment-400 text-ink rounded-xl text-xs sm:text-sm font-bold shadow-2xs transition-all cursor-pointer border border-brass/50"
+        >
+          <RotateCcw className="w-4 h-4 text-brass-dark" />
+          <span>Etkinliği Yeniden Başlat</span>
+        </button>
+
         <button
           onClick={handleFinish}
-          className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-b from-seal-light to-seal hover:from-seal hover:to-seal-dark text-parchment-100 rounded-xl text-xs sm:text-sm font-bold shadow-wax transition-all cursor-pointer border border-brass/50"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-b from-seal-light to-seal hover:from-seal hover:to-seal-dark text-parchment-100 rounded-xl text-xs sm:text-sm font-bold shadow-wax transition-all cursor-pointer border border-brass/50"
         >
           <CheckCircle2 className="w-4 h-4" />
           <span>Etkinliği Bitir</span>
         </button>
       </div>
+
+      {/* Etkinliği Bitir Kapanış Ekranı */}
+      {isTerminated && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in">
+          <div className="max-w-md w-full parchment-surface rounded-2xl border-2 border-brass p-6 sm:p-8 text-center space-y-4 shadow-parchment-lg animate-in fade-in zoom-in-95 duration-200">
+            <div className="w-14 h-14 rounded-full bg-olive-seal/15 border-2 border-olive-seal text-olive-seal mx-auto flex items-center justify-center">
+              <CheckCircle2 className="w-7 h-7" />
+            </div>
+            <h3 className="font-antique text-xl font-bold text-ink">Etkinlik Tamamlandı</h3>
+            <p className="text-xs sm:text-sm text-ink-light leading-relaxed">
+              1699-1774 Osmanlı Diplomasisi ve Antlaşmalar çalışmasını başarıyla bitirdiniz. Pencereyi veya tarayıcı sekmesini güvenle kapatabilirsiniz.
+            </p>
+            <div className="pt-2 flex justify-center">
+              <button
+                onClick={() => {
+                  try { window.close(); } catch { /* sessiz */ }
+                }}
+                className="px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-ink hover:bg-ink-light text-parchment-100 border border-brass/50 transition-all cursor-pointer shadow-wax"
+              >
+                Pencereyi Kapat
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

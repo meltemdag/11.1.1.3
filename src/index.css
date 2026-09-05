@@ -85,3 +85,43 @@
 .animate-ping-slow {
   animation: ping-slow 2.5s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
+
+/* Henüz açılmamış/tamamlanmamış pinler için akkor ampul ışığı (sıcak ışık hüzmesi) efekti */
+@keyframes warm-light-pulse {
+  0%, 100% {
+    opacity: 0.95;
+    transform: translate(-50%, -50%) scale(1.05);
+    box-shadow: 
+      0 0 10px 4px rgba(255, 253, 231, 0.95),
+      0 0 22px 8px rgba(254, 240, 138, 0.65),
+      0 0 38px 14px rgba(245, 158, 11, 0.25);
+  }
+  50% {
+    opacity: 0.35;
+    transform: translate(-50%, -50%) scale(0.9);
+    box-shadow: 
+      0 0 5px 2px rgba(255, 253, 231, 0.45),
+      0 0 12px 4px rgba(254, 240, 138, 0.25),
+      0 0 20px 6px rgba(245, 158, 11, 0.1);
+  }
+}
+
+.animate-warm-light {
+  animation: warm-light-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes warm-light-wave {
+  0% {
+    transform: translate(-50%, -50%) scale(0.65);
+    opacity: 0.8;
+  }
+  75%, 100% {
+    transform: translate(-50%, -50%) scale(2.5);
+    opacity: 0;
+  }
+}
+
+.animate-warm-light-wave {
+  animation: warm-light-wave 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+

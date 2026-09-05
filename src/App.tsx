@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { TREATIES } from './data/treaties';
 import { ActiveTab, TreatyId, TreatyProgress } from './types';
 import { Header } from './components/Header';
+import { IntroScreen } from './components/IntroScreen';
 import { MapExplorer } from './components/MapExplorer';
 import { TreatyCardActivity } from './components/TreatyCardActivity';
 import { CausalityChain } from './components/CausalityChain';
 import { TreatyComparison } from './components/TreatyComparison';
 
 export const App: React.FC = () => {
+  const [isStarted, setIsStarted] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<ActiveTab>('harita');
   const [modalTreatyId, setModalTreatyId] = useState<TreatyId | null>(null);
 
@@ -60,6 +62,13 @@ export const App: React.FC = () => {
     setActiveTab('harita');
   };
 
+  const handleRestartToHome = () => {
+    setProgress(createInitialProgress());
+    setModalTreatyId(null);
+    setActiveTab('harita');
+    setIsStarted(false);
+  };
+
   const handleSelectTreatyFromMap = (id: TreatyId) => {
     setModalTreatyId(id);
   };
@@ -68,52 +77,57 @@ export const App: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col justify-between">
-      <div>
-        <Header
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          completedCount={completedCount}
-        />
-        <main className="max-w-[1560px] mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-5">
-          {activeTab === 'harita' && (
-            <MapExplorer
-              progress={progress}
-              onSelectTreaty={handleSelectTreatyFromMap}
-              onGoToChain={() => setActiveTab('nedensellik')}
-            />
-          )}
-
-          {activeTab === 'nedensellik' && (
-            <CausalityChain
-              onGoToSummary={() => setActiveTab('karsilastirma')}
-              onGoToPrevTab={() => setActiveTab('harita')}
-            />
-          )}
-
-          {activeTab === 'karsilastirma' && (
-            <TreatyComparison
-              progress={progress}
-              onReset={handleReset}
-              onGoToPrevTab={() => setActiveTab('nedensellik')}
-            />
-          )}
-        </main>
-
-        {/* Neden - Sonuç Modal Pop-up */}
-        {modalTreatyId && (
-          <TreatyCardActivity
-            currentTreatyId={modalTreatyId}
-            progress={progress}
-            onUpdateProgress={handleUpdateProgress}
-            onClose={() => setModalTreatyId(null)}
-            onGoToPrevTab={() => setModalTreatyId(null)}
-            onGoToNextTab={() => {
-              setModalTreatyId(null);
-              setActiveTab('nedensellik');
-            }}
+      {!isStarted ? (
+        <IntroScreen onStart={() => setIsStarted(true)} />
+      ) : (
+        <div>
+          <Header
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            completedCount={completedCount}
           />
-        )}
-      </div>
+          <main className="max-w-[1560px] mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-5">
+            {activeTab === 'harita' && (
+              <MapExplorer
+                progress={progress}
+                onSelectTreaty={handleSelectTreatyFromMap}
+                onGoToChain={() => setActiveTab('nedensellik')}
+              />
+            )}
+
+            {activeTab === 'nedensellik' && (
+              <CausalityChain
+                onGoToSummary={() => setActiveTab('karsilastirma')}
+                onGoToPrevTab={() => setActiveTab('harita')}
+              />
+            )}
+
+            {activeTab === 'karsilastirma' && (
+              <TreatyComparison
+                progress={progress}
+                onReset={handleReset}
+                onRestart={handleRestartToHome}
+                onGoToPrevTab={() => setActiveTab('nedensellik')}
+              />
+            )}
+          </main>
+
+          {/* Neden - Sonuç Modal Pop-up */}
+          {modalTreatyId && (
+            <TreatyCardActivity
+              currentTreatyId={modalTreatyId}
+              progress={progress}
+              onUpdateProgress={handleUpdateProgress}
+              onClose={() => setModalTreatyId(null)}
+              onGoToPrevTab={() => setModalTreatyId(null)}
+              onGoToNextTab={() => {
+                setModalTreatyId(null);
+                setActiveTab('nedensellik');
+              }}
+            />
+          )}
+        </div>
+      )}
     </div>
   );
 };

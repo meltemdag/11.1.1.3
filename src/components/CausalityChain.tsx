@@ -117,7 +117,7 @@ export const CausalityChain: React.FC<CausalityChainProps> = ({ onGoToSummary })
       const updated = { ...placed, [slotKey(targetTreaty, targetType)]: item.id };
       setPlaced(updated);
       setSelectedItemId(null);
-      setLastFeedback({ type: 'correct', message: 'Doğru' });
+      setLastFeedback({ type: 'correct', message: 'Doğru eşleştirme.' });
 
       if (Object.keys(updated).length === CHAIN_ITEMS.length) {
         confetti({
@@ -130,16 +130,9 @@ export const CausalityChain: React.FC<CausalityChainProps> = ({ onGoToSummary })
     } else {
       setLastFeedback({
         type: 'wrong',
-        message: 'Bu halkaya uymadı. Maddenin hangi antlaşmaya ait olduğunu ve akışta neden mi sonuç mu olduğunu yeniden değerlendiriniz.'
+        message: 'Bu seçim uygun değil. Lütfen tekrar deneyiniz.'
       });
     }
-  };
-
-  const handleRemoveItem = (key: string) => {
-    const updated = { ...placed };
-    delete updated[key];
-    setPlaced(updated);
-    setLastFeedback({ type: null, message: '' });
   };
 
   const handleReset = () => {
@@ -216,16 +209,6 @@ export const CausalityChain: React.FC<CausalityChainProps> = ({ onGoToSummary })
             <p className="text-[9.5px] sm:text-[10px] xl:text-[11px] font-semibold text-ink leading-snug">
               {placedItem.text}
             </p>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleRemoveItem(key);
-              }}
-              className="text-[9.5px] sm:text-[10px] text-seal hover:text-seal-dark font-bold underline hover:no-underline cursor-pointer shrink-0"
-              title="Halkayı kaldır"
-            >
-              Kaldır
-            </button>
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center text-center leading-tight">
@@ -278,7 +261,7 @@ export const CausalityChain: React.FC<CausalityChainProps> = ({ onGoToSummary })
         {/* Açıklama ve Sıfırlama Şeridi */}
         <div className="parchment-deep px-5 sm:px-6 py-3 border-b border-parchment-400/70 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs sm:text-sm text-ink-light">
           <div>
-            Aşağıdaki maddeleri inceleyiniz; Karadeniz'in statüsündeki değişimi anlatan zinciri kurunuz. Her antlaşmanın solundaki halkaya o antlaşmayı doğuran NEDENİ, sağındaki halkaya ise SONUÇLARINI yerleştiriniz.
+            Aşağıdaki maddeleri inceleyiniz; Karadeniz'in statüsündeki değişimi anlatan zinciri kurunuz. Her antlaşmanın solundaki halkaya o antlaşmayı doğuran nedeni, sağındaki halkaya ise sonuçlarını yerleştiriniz.
           </div>
           <button
             onClick={handleReset}
